@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل الأعداد النسبية وغير النسبية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #4facfe;
+            --secondary-color: #00f2fe;
+            --accent-a: #f093fb;
+            --accent-b: #f5576c;
+        }
+
+        .dark-theme {
+            --bg-color: #1a1a2e;
+            --card-bg: #2c2c54;
+            --text-color: #f1f1f1;
+            --input-bg: #1e1e3f;
+            --border-color: #5d5d81;
+            --section-bg: #3b3b64;
+            --shadow: 0 5px 15px rgba(0,0,0,0.4);
+            --result-bg: #1e1e3f;
+        }
+
+        .light-theme {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --input-bg: #ffffff;
+            --border-color: #ddd;
+            --section-bg: #e9ecef;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --result-bg: #fdfdfd;
+        }
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       
+        html {
+             scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.5s;
+            color: var(--text-color);
+        }
+       
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: background 0.5s, box-shadow 0.5s;
+            position: relative;
+        }
+       
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin: 0;
+        }
+       
+        .btn-theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .calculator-section {
+            background: var(--section-bg);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .calculator-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .katex-preview {
+            font-size: 2em;
+            padding: 10px 20px;
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            min-width: 100px;
+            text-align: center;
+            direction: ltr;
+        }
+
+        .input-examples {
+            font-size: 0.9em;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 18px;
+            transition: border-color 0.3s, background-color 0.3s;
+            background: var(--input-bg);
+            color: var(--text-color);
+            width: 100%;
+            text-align: center;
+        }
+       
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .input-helpers {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .helper-btn {
+            padding: 8px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .helper-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .problem-description {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            line-height: 1.8;
+            text-align: center;
+            padding: 15px;
+            background: var(--result-bg);
+            border-radius: 10px;
+        }
+       
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Cairo', sans-serif;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+               
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+       
+        .result-section {
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-section.active {
+            display: block;
+        }
+       
+        .result-title {
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 15px;
+            align-items: center;
+            font-size: 1.2em;
+        }
+        .result-grid strong {
+            color: var(--secondary-color);
+        }
+        
+        .explanation {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .explanation h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            line-height: 2.2;
+            margin-bottom: 10px;
+        }
+
+        .step-math {
+            padding: 15px;
+            background: var(--section-bg);
+            border-radius: 8px;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        .final-answer {
+            text-align: center;
+            font-size: 1.5em;
+            padding: 20px;
+            background: var(--section-bg);
+            border-radius: 10px;
+            margin-top: 15px;
+            direction: ltr;
+        }
+
+        .number-line {
+            margin: 20px 0;
+            padding: 30px 20px;
+            background: var(--section-bg);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .line-visual {
+            position: relative;
+            height: 60px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .line-base {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            transform: translateY(-50%);
+        }
+
+        .line-point {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-b);
+        }
+
+        .line-label {
+            position: absolute;
+            top: 100%;
+            transform: translateX(-50%);
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .footer-card {
+            margin-top: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+       
+        .footer-card a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 20px; }
+            .header h1 { font-size: 1.5em; }
+            .input-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <div class="header">
+            <h1>تحليل الأعداد النسبية وغير النسبية</h1>
+            <button id="themeToggle" class="btn-theme-toggle">تبديل الثيم 💡</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>1. كاشف نوع العدد</h2>
+            <p class="input-examples">
+                أمثلة: 5 أو -3.14 أو 22/7 أو √50 أو π
+            </p>
+            <div class="input-helpers">
+                <button class="helper-btn" onclick="insertSymbol('numberInput', '√')">√ جذر</button>
+                <button class="helper-btn" onclick="insertSymbol('numberInput', '/')">/ كسر</button>
+                <button class="helper-btn" onclick="insertSymbol('numberInput', 'π')">π باي</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="numberInput" placeholder="أدخل العدد هنا">
+                <div class="katex-preview" id="analyzePreview">?</div>
+            </div>
+            <button onclick="handleAnalysis()">تحليل العدد</button>
+        </div>
+        
+        <div class="result-section" id="analysisResultSection">
+            <h3 class="result-title">نتيجة التحليل</h3>
+            <div class="result-grid">
+                <strong>المدخل:</strong> <span id="analyzedInput"></span>
+                <strong>القيمة العددية:</strong> <span id="numericValue"></span>
+                <strong>النوع:</strong> <span id="numberType"></span>
+                <strong>عدد حقيقي؟</strong> <span id="isReal"></span>
+            </div>
+            <div class="explanation" id="analysisExplanation"></div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>2. تحديد موقع عدد غير نسبي بين عددين نسبيين</h2>
+            <p class="problem-description">
+                أدخل عدداً غير نسبياً (جذر أو كسر أو عدد عشري) وسنحدد موقعه بين عددين نسبيين متتاليين
+            </p>
+            <p class="input-examples">
+                أمثلة: √57 أو 22/7 أو 3.14159 أو √2
+            </p>
+            <div class="input-helpers">
+                <button class="helper-btn" onclick="insertSymbol('locatorInput', '√')">√ جذر</button>
+                <button class="helper-btn" onclick="insertSymbol('locatorInput', '/')">/ كسر</button>
+                <button class="helper-btn" onclick="insertSymbol('locatorInput', 'π')">π باي</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="locatorInput" placeholder="أدخل العدد غير النسبي" value="√57">
+                <div class="katex-preview" id="locatePreview">?</div>
+            </div>
+            <button onclick="handleLocation()">تحديد الموقع</button>
+        </div>
+
+        <div class="result-section" id="locationResultSection">
+            <h3 class="result-title">تحديد الموقع</h3>
+            <div class="explanation" id="locationExplanation"></div>
+        </div>
+
+        <div class="footer-card">
+            <a href="https://ekhtebaraty.com" target="_blank">للمزيد زر موقعنا اختباراتي</a>
+        </div>
+    </div>
+   
+    <script>
+        // --- Theme Management ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+            setTheme(currentTheme);
+        });
+
+        function setTheme(theme) {
+            const body = document.body;
+            const toggleButton = document.getElementById('themeToggle');
+            if (theme === 'light') {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                toggleButton.textContent = 'تبديل الثيم 🌙';
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                toggleButton.textContent = 'تبديل الثيم 💡';
+            }
+        }
+
+        // Input listeners for preview
+        document.getElementById('numberInput').addEventListener('input', function() {
+            updatePreview(this.value, 'analyzePreview');
+        });
+
+        document.getElementById('locatorInput').addEventListener('input', function() {
+            updatePreview(this.value, 'locatePreview');
+        });
+
+        function insertSymbol(inputId, symbol) {
+            const input = document.getElementById(inputId);
+            const cursorPos = input.selectionStart;
+            const textBefore = input.value.substring(0, cursorPos);
+            const textAfter = input.value.substring(cursorPos);
+            
+            input.value = textBefore + symbol + textAfter;
+            input.setSelectionRange(cursorPos + symbol.length, cursorPos + symbol.length);
+            input.focus();
+            updatePreview(input.value, inputId === 'numberInput' ? 'analyzePreview' : 'locatePreview');
+        }
+
+        function updatePreview(input, elementId) {
+            const parsed = parseInput(input);
+            if (parsed.latex) {
+                renderMath(parsed.latex, elementId);
+            } else {
+                document.getElementById(elementId).textContent = '?';
+            }
+        }
+
+        function renderMath(latex, elementId) {
+            const element = document.getElementById(elementId);
+            try {
+                katex.render(latex, element, { throwOnError: false });
+            } catch(e) {
+                element.textContent = '?';
+            }
+        }
+
+        function renderMathInline(latex) {
+            const span = document.createElement('span');
+            try {
+                katex.render(latex, span, { throwOnError: false });
+                return span.outerHTML;
+            } catch(e) {
+                return latex;
+            }
+        }
+
+        function isPerfectSquare(n) {
+            if (n < 0) return false;
+            const sqrt = Math.sqrt(n);
+            return Math.abs(sqrt - Math.round(sqrt)) < 1e-10;
+        }
+
+        function gcd(a, b) {
+            a = Math.abs(Math.round(a));
+            b = Math.abs(Math.round(b));
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function parseInput(input) {
+            input = input.trim();
+            let value = null;
+            let latex = null;
+            let isRational = true;
+            let isReal = true;
+
+            // Handle square root symbol (√)
+            if (input.includes('√')) {
+                const parts = input.split('√');
+                if (parts.length === 2 && parts[0] === '') {
+                    const numStr = parts[1];
+                    const num = parseFloat(numStr);
+                    if (!isNaN(num)) {
+                        if (num < 0) {
+                            isReal = false;
+                            latex = `\\sqrt{${num}}`;
+                        } else {
+                            value = Math.sqrt(num);
+                            latex = `\\sqrt{${num}}`;
+                            isRational = isPerfectSquare(num);
+                        }
+                    }
+                }
+            }
+            // Handle fractions
+            else if (input.includes('/')) {
+                const parts = input.split('/');
+                if (parts.length === 2) {
+                    const num = parseFloat(parts[0]);
+                    const den = parseFloat(parts[1]);
+                    if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                        value = num / den;
+                        latex = `\\frac{${num}}{${den}}`;
+                        isRational = true;
+                    }
+                }
+            }
+            // Handle pi
+            else if (input === 'pi' || input === 'π') {
+                value = Math.PI;
+                latex = '\\pi';
+                isRational = false;
+            }
+            // Handle regular numbers
+            else {
+                const num = parseFloat(input);
+                if (!isNaN(num)) {
+                    value = num;
+                    latex = num.toString();
+                    isRational = true;
+                }
+            }
+
+            return { value, latex, isRational, isReal };
+        }
+
+        // --- Calculator 1: Number Analysis ---
+        function handleAnalysis() {
+            const input = document.getElementById('numberInput').value.trim();
+            if (!input) {
+                alert("الرجاء إدخال عدد لتحليله.");
+                return;
+            }
+
+            const parsed = parseInput(input);
+            if (parsed.value === null && parsed.isReal) {
+                alert("المدخل غير صالح. الرجاء المحاولة مرة أخرى.");
+                return;
+            }
+
+            let explanation = '';
+
+            if (!parsed.isReal) {
+                explanation = `<p>الجذر التربيعي لعدد سالب هو عدد تخيلي، وليس عدداً حقيقياً.</p>
+                    <p>الأعداد التخيلية تستخدم الوحدة التخيلية ${renderMathInline('i')} حيث ${renderMathInline('i^2 = -1')}.</p>`;
+            } else if (parsed.isRational) {
+                explanation = `<p>هذا العدد <strong>نسبي</strong> لأنه يمكن كتابته على صورة كسر ${renderMathInline('\\frac{p}{q}')} حيث ${renderMathInline('p, q')} أعداد صحيحة و ${renderMathInline('q \\neq 0')}.</p>`;
+                
+                if (Number.isInteger(parsed.value)) {
+                    explanation += `<p>الأعداد الصحيحة هي حالة خاصة من الأعداد النسبية: ${renderMathInline(parsed.value + ' = \\frac{' + parsed.value + '}{1}')}</p>`;
+                } else {
+                    // Try to convert decimal to fraction
+                    const decimalPlaces = (parsed.value.toString().split('.')[1] || '').length;
+                    if (decimalPlaces > 0 && decimalPlaces < 10) {
+                        const denominator = Math.pow(10, decimalPlaces);
+                        const numerator = Math.round(parsed.value * denominator);
+                        const g = gcd(numerator, denominator);
+                        const simplifiedNum = numerator / g;
+                        const simplifiedDen = denominator / g;
+                        explanation += `<p>يمكن كتابة هذا العدد العشري ككسر: ${renderMathInline('\\frac{' + simplifiedNum + '}{' + simplifiedDen + '}')}</p>`;
+                    }
+                }
+            } else {
+                explanation = `<p>هذا العدد <strong>غير نسبي</strong> لأنه لا يمكن كتابته على صورة كسر ${renderMathInline('\\frac{p}{q}')} من الأعداد الصحيحة.</p>`;
+                explanation += `<p>الأعداد غير النسبية هي أعداد عشرية غير منتهية وغير دورية.</p>`;
+                
+                if (input.includes('√')) {
+                    explanation += `<p>الجذور التربيعية للأعداد غير الكاملة هي دائماً أعداد غير نسبية.</p>`;
+                }
+            }
+
+            displayAnalysisResult(parsed.latex, parsed.value, parsed.isRational, parsed.isReal, explanation);
+        }
+
+        function displayAnalysisResult(latex, value, isRational, isReal, explanation) {
+            document.getElementById('locationResultSection').classList.remove('active');
+            const resultSection = document.getElementById('analysisResultSection');
+            
+            document.getElementById('analyzedInput').innerHTML = renderMathInline(latex);
+            document.getElementById('numericValue').textContent = isReal ? (value !== null ? value.toFixed(6) : 'غير محدد') : 'غير حقيقي';
+            document.getElementById('isReal').textContent = isReal ? 'نعم ✓' : 'لا (تخيلي) ✗';
+            
+            if (!isReal) {
+                document.getElementById('numberType').textContent = 'تخيلي';
+            } else {
+                document.getElementById('numberType').textContent = isRational ? 'نسبي ✓' : 'غير نسبي ✗';
+            }
+            
+            document.getElementById('analysisExplanation').innerHTML = `<h4>التوضيح:</h4>${explanation}`;
+            
+            resultSection.classList.add('active');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // --- Calculator 2: Irrational Number Locator ---
+        function handleLocation() {
+            const input = document.getElementById('locatorInput').value.trim();
+            if (!input) {
+                alert("الرجاء إدخال عدد.");
+                return;
+            }
+
+            const parsed = parseInput(input);
+            if (parsed.value === null || !parsed.isReal) {
+                alert("الرجاء إدخال عدد حقيقي صالح.");
+                return;
+            }
+
+            const value = parsed.value;
+            const latex = parsed.latex;
+
+            // Find surrounding integers or rationals
+            const x = Math.floor(value);
+            const y = x + 1;
+
+            let explanationHTML = `<p>العدد المدخل: ${renderMathInline(latex)} ${renderMathInline('\\approx ' + value.toFixed(6))}</p>`;
+            
+            if (parsed.isRational) {
+                explanationHTML += `<p><strong>ملاحظة:</strong> هذا العدد نسبي وليس غير نسبي، لكن يمكننا تحديد موقعه على خط الأعداد.</p>`;
+            }
+
+            explanationHTML += `<hr><p><strong>تحديد الموقع:</strong> نبحث عن عددين صحيحين متتاليين ${renderMathInline('x, y')} بحيث ${renderMathInline('x < ' + latex + ' < y')}.</p>`;
+            explanationHTML += `<p>نجد أن: ${renderMathInline(x + ' < ' + value.toFixed(4) + ' < ' + y)}</p>`;
+            explanationHTML += `<div class="final-answer">${renderMathInline('x = ' + x)} و ${renderMathInline('y = ' + y)}</div>`;
+
+            // Number line visualization
+            explanationHTML += `<div class="number-line">
+                <h4>التمثيل على خط الأعداد:</h4>
+                <div class="line-visual">
+                    <div class="line-base"></div>
+                    <div class="line-point" style="left: 0%;">
+                        <div class="line-label">${x}</div>
+                    </div>
+                    <div class="line-point" style="left: ${((value - x) * 100).toFixed(1)}%; background: var(--accent-a);">
+                        <div class="line-label">${renderMathInline(latex)}</div>
+                    </div>
+                    <div class="line-point" style="left: 100%;">
+                        <div class="line-label">${y}</div>
+                    </div>
+                </div>
+            </div>`;
+
+            // Additional info for square roots
+            if (input.includes('√')) {
+                const numStr = input.split('√')[1];
+                const n = parseFloat(numStr);
+                if (!isNaN(n)) {
+                    const x_squared = x * x;
+                    const y_squared = y * y;
+                    explanationHTML += `<hr><h4>توضيح إضافي للجذور:</h4>`;
+                    explanationHTML += `<p>بما أن ${renderMathInline(x + '^2 = ' + x_squared)} و ${renderMathInline(y + '^2 = ' + y_squared)}</p>`;
+                    explanationHTML += `<p>وحيث أن: ${renderMathInline(x_squared + ' < ' + n + ' < ' + y_squared)}</p>`;
+                    explanationHTML += `<p>فإن: ${renderMathInline(x + ' < \\sqrt{' + n + '} < ' + y)}</p>`;
+                }
+            }
+
+            displayLocationResult(explanationHTML);
+        }
+
+        function displayLocationResult(explanation) {
+            document.getElementById('analysisResultSection').classList.remove('active');
+            const resultSection = document.getElementById('locationResultSection');
+            document.getElementById('locationExplanation').innerHTML = explanation;
+            
+            resultSection.classList.add('active');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

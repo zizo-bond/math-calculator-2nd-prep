@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة التحليل إلى العوامل</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-a: #f093fb;
+            --accent-b: #f5576c;
+        }
+
+        .dark-theme {
+            --bg-color: #1a1a2e;
+            --card-bg: #2c2c54;
+            --text-color: #f1f1f1;
+            --input-bg: #1e1e3f;
+            --border-color: #5d5d81;
+            --section-bg: #3b3b64;
+            --shadow: 0 5px 15px rgba(0,0,0,0.4);
+            --result-bg: #1e1e3f;
+        }
+
+        .light-theme {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --input-bg: #ffffff;
+            --border-color: #ddd;
+            --section-bg: #e9ecef;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --result-bg: #fdfdfd;
+        }
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.5s;
+            color: var(--text-color);
+        }
+       
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: background 0.5s, box-shadow 0.5s;
+        }
+       
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin: 0;
+        }
+       
+        .btn-theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .calculator-section {
+            background: var(--section-bg);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .calculator-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .katex-preview {
+            font-size: 2em;
+            padding: 15px 25px;
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            min-width: 150px;
+            text-align: center;
+            direction: ltr;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.9em;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .input-examples {
+            font-size: 0.9em;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        input[type="number"], input[type="text"] {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 18px;
+            transition: border-color 0.3s, background-color 0.3s;
+            background: var(--input-bg);
+            color: var(--text-color);
+            width: 100px;
+            text-align: center;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 18px;
+            transition: border-color 0.3s, background-color 0.3s;
+            background: var(--input-bg);
+            color: var(--text-color);
+            width: 100px;
+            text-align: center;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        input[type="text"] {
+            width: 100%;
+        }
+       
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+       
+        button {
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); 
+            width: 100%; 
+        }
+       
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-example {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+            margin: 3px;
+        }
+       
+        .result-section {
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-section.active {
+            display: block;
+        }
+       
+        .result-title {
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .calculation-display {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            direction: ltr;
+            padding: 20px;
+            background: var(--section-bg);
+            border-radius: 10px;
+        }
+        
+        .explanation {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .explanation h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .step-math {
+            padding: 15px;
+            background: var(--section-bg);
+            border-radius: 8px;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .law-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .law-box h5 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .law-math {
+            direction: ltr;
+            text-align: center;
+            font-size: 1.3em;
+            padding: 10px;
+        }
+        
+        .footer-card {
+            margin-top: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+       
+        .footer-card:hover {
+            transform: scale(1.02);
+        }
+       
+        .footer-card a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            input[type="number"], select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <div class="header">
+            <h1>حاسبة التحليل إلى العوامل</h1>
+            <button id="themeToggle" class="btn-theme-toggle">تبديل الثيم 💡</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>1. التحليل بإخراج العامل المشترك الأكبر</h2>
+            <p class="input-examples">
+                أضف كل حد من حدود المعادلة بشكل منفصل.
+                <button class="btn-example" onclick="setGCFExample(1)">16a⁶ - 4a⁴ + 12a²</button>
+                <button class="btn-example" onclick="setGCFExample(2)">12x³y² + 18x²y³ - 6xy</button>
+            </p>
+            <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 10px;">
+                <div class="katex-preview" id="gcfPreview" style="width: 100%; margin-bottom: 10px;"></div>
+                <div id="gcfTermsContainer">
+                    <!-- Terms will be dynamically inserted here -->
+                </div>
+                <button onclick="addGCFTerm()" style="background: #4a5568; padding: 10px; width: 100%;" class="btn-primary">+ إضافة حد</button>
+            </div>
+            <button class="btn-primary" onclick="handleGCF()" style="margin-top: 15px;">التحليل باستخراج العامل المشترك الأكبر</button>
+        </div>
+
+        <template id="gcfTermTemplate">
+            <div class="input-group gcf-term" style="background: var(--bg-color); padding: 10px; border-radius: 8px; justify-content: space-between; gap: 10px;">
+                <div class="input-wrapper">
+                    <span class="input-label">المعامل</span>
+                    <input type="number" class="gcf-coeff" value="1" oninput="updateGCFPreview()">
+                </div>
+                <div class="input-wrapper" style="flex-grow: 1;">
+                    <span class="input-label">المتغيرات (مثل a^6 أو x^3y^2)</span>
+                    <input type="text" class="gcf-vars" value="" oninput="updateGCFPreview()" style="direction: ltr; text-align: left; padding-left: 10px;">
+                </div>
+                <button class="btn-remove-term" onclick="this.parentElement.remove(); updateGCFPreview();" style="background: #e53e3e; color: white; border: none; width: 40px; height: 40px; align-self: center; border-radius: 50%; padding: 0; flex-shrink: 0;">×</button>
+            </div>
+        </template>
+
+
+        <div class="calculator-section">
+            <h2>2. تحليل ثلاثية الحدود</h2>
+            <p class="input-examples">صيغة: ax² + bx + c</p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="triA" placeholder="a" value="1">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="triB" placeholder="b" value="5">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="triC" placeholder="c" value="6">
+                </div>
+                <div class="katex-preview" id="trinomialPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="handleTrinomial()">تحليل ثلاثية الحدود</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>3. الحالات الخاصة</h2>
+            <p class="input-examples">الفرق بين مربعين، المربع الكامل، الفرق/المجموع بين مكعبين</p>
+            <p class="input-examples">
+                <button class="btn-example" onclick="setSpecialExample(2, 1, 0, -9)">الفرق بين مربعين</button>
+                <button class="btn-example" onclick="setSpecialExample(3, 1, 0, -8)">الفرق بين مكعبين</button>
+                <button class="btn-example" onclick="setSpecialExample(3, 1, 0, 27)">مجموع مكعبين</button>
+                <button class="btn-example" onclick="setSpecialExample(2, 1, 6, 9)">المربع الكامل</button>
+            </p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">الأس</span>
+                    <select id="specPower">
+                        <option value="2">x²</option>
+                        <option value="3">x³</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="specA" placeholder="a" value="1">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="specB" placeholder="b" value="0">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="specC" placeholder="c" value="-9">
+                </div>
+                <div class="katex-preview" id="specialPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="handleSpecialCases()">تحليل الحالة الخاصة</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>4. التحليل بالتقسيم</h2>
+            <p class="input-examples">تحليل متعددة حدود ذات 4 حدود: ax³ + bx² + cx + d</p>
+            <p class="input-examples">مثال 1: 2x³ + 3x² + 4x + 6 | مثال 2: x³ - 7x² + x - 7</p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="grpA" placeholder="a" value="1">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="grpB" placeholder="b" value="-7">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="grpC" placeholder="c" value="1">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">d</span>
+                    <input type="number" id="grpD" placeholder="d" value="-7">
+                </div>
+                <div class="katex-preview" id="groupingPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="handleGrouping()">تحليل بالتقسيم</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>5. تحليل ثلاثية الحدود بالتقسيم (طريقة AC)</h2>
+            <p class="input-examples">لتحليل المعادلات من الشكل ax² + bx + c باستخدام طريقة التقسيم إلى مجموعات</p>
+            <p class="input-examples">
+                <button class="btn-example" onclick="setTrinomialGroupingExample(1)">2x² + 9x + 10</button>
+                <button class="btn-example" onclick="setTrinomialGroupingExample(2)">3x² + 10x + 8</button>
+                <button class="btn-example" onclick="setTrinomialGroupingExample(3)">6x² + 11x + 4</button>
+            </p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="triGrpA" placeholder="a" value="2">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="triGrpB" placeholder="b" value="9">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="triGrpC" placeholder="c" value="10">
+                </div>
+                <div class="katex-preview" id="trinomialGroupingPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="handleTrinomialGrouping()">تحليل بالتقسيم (طريقة AC)</button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h3 class="result-title" id="resultTitle">النتيجة</h3>
+            <div class="calculation-display" id="calculationDisplay"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="footer-card">
+            <a href="https://ekhtebaraty.com" target="_blank">للمزيد زر موقعنا اختباراتي</a>
+        </div>
+    </div>
+   
+    <script>
+        // --- Theme Management ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = 'dark';
+            setTheme(savedTheme);
+            setupInitialGCFTerms();
+            updateAllPreviews();
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+            setTheme(currentTheme);
+        });
+
+        function setTheme(theme) {
+            const body = document.body;
+            const toggleButton = document.getElementById('themeToggle');
+            if (theme === 'light') {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                toggleButton.textContent = 'تبديل الثيم 🌙';
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                toggleButton.textContent = 'تبديل الثيم 💡';
+            }
+        }
+
+        // Input listeners
+        ['triA', 'triB', 'triC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+        ['specA', 'specB', 'specC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+        document.getElementById('specPower').addEventListener('change', updateAllPreviews);
+        ['grpA', 'grpB', 'grpC', 'grpD'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+        ['triGrpA', 'triGrpB', 'triGrpC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+
+        function updateAllPreviews() {
+            updateGCFPreview();
+            updateTrinomialPreview();
+            updateSpecialPreview();
+            updateGroupingPreview();
+            updateTrinomialGroupingPreview();
+        }
+
+        function updateTrinomialPreview() {
+            const a = parseFloat(document.getElementById('triA').value) || 0;
+            const b = parseFloat(document.getElementById('triB').value) || 0;
+            const c = parseFloat(document.getElementById('triC').value) || 0;
+            const latex = formatPolynomial(a, b, c);
+            renderToElement('trinomialPreview', latex);
+        }
+
+        function updateTrinomialGroupingPreview() {
+            const a = parseFloat(document.getElementById('triGrpA').value) || 0;
+            const b = parseFloat(document.getElementById('triGrpB').value) || 0;
+            const c = parseFloat(document.getElementById('triGrpC').value) || 0;
+            const latex = formatPolynomial(a, b, c);
+            renderToElement('trinomialGroupingPreview', latex);
+        }
+
+        function updateSpecialPreview() {
+            const power = parseInt(document.getElementById('specPower').value);
+            const a = parseFloat(document.getElementById('specA').value) || 0;
+            const b = parseFloat(document.getElementById('specB').value) || 0;
+            const c = parseFloat(document.getElementById('specC').value) || 0;
+            
+            let latex = '';
+            if (power === 2) {
+                latex = formatPolynomial(a, b, c);
+            } else if (power === 3) {
+                latex = formatPolynomial3(a, b, c);
+            }
+            renderToElement('specialPreview', latex);
+        }
+
+        function updateGroupingPreview() {
+            const a = parseFloat(document.getElementById('grpA').value) || 0;
+            const b = parseFloat(document.getElementById('grpB').value) || 0;
+            const c = parseFloat(document.getElementById('grpC').value) || 0;
+            const d = parseFloat(document.getElementById('grpD').value) || 0;
+            const latex = formatPolynomial4(a, b, c, d);
+            renderToElement('groupingPreview', latex);
+        }
+
+        function formatPolynomial(a, b, c) {
+            let terms = [];
+            
+            if (a !== 0) {
+                if (a === 1) terms.push('x^2');
+                else if (a === -1) terms.push('-x^2');
+                else terms.push(a + 'x^2');
+            }
+            
+            if (b !== 0) {
+                if (b === 1) terms.push(terms.length > 0 ? '+x' : 'x');
+                else if (b === -1) terms.push('-x');
+                else terms.push((b > 0 && terms.length > 0 ? '+' : '') + b + 'x');
+            }
+            
+            if (c !== 0) {
+                terms.push((c > 0 && terms.length > 0 ? '+' : '') + c);
+            }
+            
+            return terms.length > 0 ? terms.join('') : '0';
+        }
+
+        function formatPolynomial3(a, b, c) {
+            let terms = [];
+            
+            if (a !== 0) {
+                if (a === 1) terms.push('x^3');
+                else if (a === -1) terms.push('-x^3');
+                else terms.push(a + 'x^3');
+            }
+            
+            if (b !== 0) {
+                if (b === 1) terms.push(terms.length > 0 ? '+x' : 'x');
+                else if (b === -1) terms.push('-x');
+                else terms.push((b > 0 && terms.length > 0 ? '+' : '') + b + 'x');
+            }
+            
+            if (c !== 0) {
+                terms.push((c > 0 && terms.length > 0 ? '+' : '') + c);
+            }
+            
+            return terms.length > 0 ? terms.join('') : '0';
+        }
+
+        function formatPolynomial4(a, b, c, d) {
+            let terms = [];
+            
+            if (a !== 0) {
+                if (a === 1) terms.push('x^3');
+                else if (a === -1) terms.push('-x^3');
+                else terms.push(a + 'x^3');
+            }
+            
+            if (b !== 0) {
+                if (b === 1) terms.push(terms.length > 0 ? '+x^2' : 'x^2');
+                else if (b === -1) terms.push('-x^2');
+                else terms.push((b > 0 && terms.length > 0 ? '+' : '') + b + 'x^2');
+            }
+            
+            if (c !== 0) {
+                if (c === 1) terms.push(terms.length > 0 ? '+x' : 'x');
+                else if (c === -1) terms.push('-x');
+                else terms.push((c > 0 && terms.length > 0 ? '+' : '') + c + 'x');
+            }
+            
+            if (d !== 0) {
+                terms.push((d > 0 && terms.length > 0 ? '+' : '') + d);
+            }
+            
+            return terms.length > 0 ? terms.join('') : '0';
+        }
+
+        function renderToElement(elementId, latex) {
+            const element = document.getElementById(elementId);
+            katex.render(latex, element, { throwOnError: false });
+        }
+
+        function renderMath(latex) {
+            const span = document.createElement('span');
+            katex.render(latex, span, { throwOnError: false });
+            return span.outerHTML;
+        }
+
+        function gcd(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b !== 0) {
+                let temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        function gcdMultiple(numbers) {
+            if (numbers.length === 0) return 1;
+            return numbers.reduce((acc, num) => gcd(acc, num));
+        }
+
+        // --- Calculator 1: GCF for Algebraic Expressions ---
+        const gcfTermTemplate = document.getElementById('gcfTermTemplate');
+        const gcfTermsContainer = document.getElementById('gcfTermsContainer');
+
+        function addGCFTerm(coeff = 1, vars = '') {
+            const newTerm = gcfTermTemplate.content.cloneNode(true);
+            newTerm.querySelector('.gcf-coeff').value = coeff;
+            newTerm.querySelector('.gcf-vars').value = vars;
+            gcfTermsContainer.appendChild(newTerm);
+            updateGCFPreview();
+        }
+
+        function updateGCFPreview() {
+            const terms = [];
+            const termElements = gcfTermsContainer.querySelectorAll('.gcf-term');
+            termElements.forEach((termEl, index) => {
+                const coeff = parseFloat(termEl.querySelector('.gcf-coeff').value) || 0;
+                const vars = termEl.querySelector('.gcf-vars').value.trim();
+                
+                if (coeff === 0) return;
+
+                let termStr = '';
+                
+                if (coeff > 0 && index > 0) {
+                    termStr = '+';
+                }
+
+                if (Math.abs(coeff) === 1 && vars) {
+                    termStr += (coeff === -1 ? '-' : '');
+                } else {
+                    termStr += coeff;
+                }
+                
+                termStr += vars.replace(/\*/g, '');
+                terms.push(termStr);
+            });
+
+            let finalLatex = terms.join('');
+            if (finalLatex.startsWith('+')) {
+                finalLatex = finalLatex.substring(1);
+            }
+            
+            renderToElement('gcfPreview', finalLatex || '0');
+        }
+
+        function setGCFExample(exampleNum) {
+            gcfTermsContainer.innerHTML = '';
+            if (exampleNum === 1) {
+                addGCFTerm(16, 'a^6');
+                addGCFTerm(-4, 'a^4');
+                addGCFTerm(12, 'a^2');
+            } else if (exampleNum === 2) {
+                addGCFTerm(12, 'x^3y^2');
+                addGCFTerm(18, 'x^2y^3');
+                addGCFTerm(-6, 'xy');
+            }
+        }
+
+        function setupInitialGCFTerms() {
+            setGCFExample(1);
+        }
+
+        function parseVariables(variablePart) {
+            const variables = {};
+            const varMatches = variablePart.matchAll(/([a-z])(?:\^\{?(\d+)\}?)?/gi);
+            for (const match of varMatches) {
+                const variable = match[1];
+                const power = match[2] ? parseInt(match[2]) : 1;
+                variables[variable] = (variables[variable] || 0) + power;
+            }
+            return variables;
+        }
+
+        function handleGCF() {
+            const termElements = gcfTermsContainer.querySelectorAll('.gcf-term');
+            if (termElements.length === 0) {
+                alert("الرجاء إضافة حد واحد على الأقل.");
+                return;
+            }
+
+            const terms = [];
+            let originalExpression = '';
+
+            termElements.forEach((termEl, index) => {
+                const coefficient = parseFloat(termEl.querySelector('.gcf-coeff').value) || 0;
+                const variableStr = termEl.querySelector('.gcf-vars').value.trim();
+                if (coefficient === 0) return;
+
+                const variables = parseVariables(variableStr);
+                terms.push({ coefficient, variables });
+
+                let sign = '';
+                if (index > 0 && coefficient > 0) {
+                    sign = '+';
+                }
+                originalExpression += sign + ( (Math.abs(coefficient) === 1 && variableStr) ? (coefficient === -1 ? "-" : "") : coefficient ) + variableStr;
+            });
+             if (originalExpression.startsWith('+')) {
+                originalExpression = originalExpression.substring(1);
+            }
+
+            if (terms.length === 0) {
+                alert("الرجاء إدخال معادلة صالحة.");
+                return;
+            }
+            
+            let steps = [];
+            steps.push(`<p>المعادلة الأصلية: ${renderMath(originalExpression)}</p>`);
+            steps.push(`<hr><h4>الخطوات:</h4>`);
+
+            const coefficients = terms.map(t => Math.abs(t.coefficient));
+            const numericGCF = gcdMultiple(coefficients.filter(c => c !== 0));
+            
+            steps.push(`<p><strong>1. العامل العددي المشترك:</strong></p>`);
+            steps.push(`<p>المعاملات: ${coefficients.join(', ')}</p>`);
+            steps.push(`<p>العامل المشترك الأكبر للمعاملات: ${renderMath('GCF = ' + numericGCF)}</p>`);
+
+            const allVariables = new Set();
+            terms.forEach(term => {
+                Object.keys(term.variables).forEach(v => allVariables.add(v));
+            });
+
+            const commonVariables = {};
+            allVariables.forEach(variable => {
+                if (terms.every(t => t.variables[variable])) { 
+                    const powers = terms.map(t => t.variables[variable] || 0);
+                    const minPower = Math.min(...powers);
+                    if (minPower > 0) {
+                        commonVariables[variable] = minPower;
+                    }
+                }
+            });
+
+            steps.push(`<p><strong>2. المتغيرات المشتركة وأصغر أس لكل منها:</strong></p>`);
+            
+            if (Object.keys(commonVariables).length > 0) {
+                Object.entries(commonVariables).forEach(([variable, power]) => {
+                    steps.push(`<p>المتغير ${renderMath(variable)}: أصغر أس = ${power}</p>`);
+                });
+            } else {
+                steps.push(`<p>لا توجد متغيرات مشتركة في جميع الحدود</p>`);
+            }
+
+            let gcfStr = numericGCF === 1 && Object.keys(commonVariables).length > 0 ? '' : numericGCF.toString();
+            if (numericGCF === 0) gcfStr = "0";
+            
+            Object.entries(commonVariables).forEach(([variable, power]) => {
+                gcfStr += variable + (power > 1 ? '^{' + power + '}' : '');
+            });
+            if (gcfStr === '') gcfStr = '1';
+
+            steps.push(`<div class="law-box">
+                <h5>📌 العامل المشترك الأكبر</h5>
+                <div class="law-math">${renderMath('GCF = ' + gcfStr)}</div>
+            </div>`);
+
+            steps.push(`<hr><h4>إخراج العامل المشترك:</h4>`);
+            
+            let factoredTerms = terms.map((term, index) => {
+                let newCoeff = numericGCF === 0 ? 0 : term.coefficient / numericGCF;
+                let newVars = { ...term.variables };
+                
+                Object.entries(commonVariables).forEach(([variable, power]) => {
+                    newVars[variable] = (newVars[variable] || 0) - power;
+                    if (newVars[variable] === 0) {
+                        delete newVars[variable];
+                    }
+                });
+                
+                return formatTerm(newCoeff, newVars, index === 0);
+            });
+
+            const factoredExpression = factoredTerms.join('');
+            
+            steps.push(`<p><strong>التحليل النهائي:</strong></p>`);
+            steps.push(`<div class="step-math">${renderMath(originalExpression + ' = ' + gcfStr + '(' + factoredExpression + ')')}</div>`);
+
+            steps.push(`<hr><h4>التحقق:</h4>`);
+            steps.push(`<p>يمكن التحقق من الإجابة بضرب العامل المشترك في القوس</p>`);
+
+            displayResult(
+                `العامل المشترك الأكبر`,
+                gcfStr + '(' + factoredExpression + ')',
+                steps.join('')
+            );
+        }
+
+        function formatTerm(coefficient, variables, isFirst) {
+            let result = '';
+            
+            if (coefficient === 0) return '';
+            
+            if (isFirst) {
+                if (coefficient === -1 && Object.keys(variables).length > 0) {
+                    result = '-';
+                } else if (coefficient === 1 && Object.keys(variables).length > 0) {
+                    result = '';
+                } else {
+                    result = coefficient.toString();
+                }
+            } else {
+                if (coefficient > 0) {
+                    result = '+';
+                    if (coefficient !== 1 || Object.keys(variables).length === 0) {
+                        result += coefficient;
+                    }
+                } else {
+                    if (coefficient === -1 && Object.keys(variables).length > 0) {
+                        result = '-';
+                    } else {
+                        result = coefficient.toString();
+                    }
+                }
+            }
+            
+            const sortedVars = Object.keys(variables).sort();
+            sortedVars.forEach(variable => {
+                const power = variables[variable];
+                if (power > 0) {
+                    result += variable;
+                    if (power > 1) {
+                        result += '^{' + power + '}';
+                    }
+                }
+            });
+            
+            return result;
+        }
+
+        // --- Calculator 2: Trinomial Factoring ---
+        function handleTrinomial() {
+            const a = parseFloat(document.getElementById('triA').value);
+            const b = parseFloat(document.getElementById('triB').value);
+            const c = parseFloat(document.getElementById('triC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = formatPolynomial(a, b, c);
+            let steps = [];
+
+            steps.push(`<p>المطلوب تحليل: ${renderMath(original)}</p>`);
+            steps.push(`<div class="law-box">
+                <h5>📌 طريقة التحليل</h5>
+                <p>نبحث عن عددين حاصل ضربهما = ${renderMath('a \\times c = ' + a + ' \\times ' + c + ' = ' + (a*c))}</p>
+                <p>ومجموعهما = ${renderMath('b = ' + b)}</p>
+            </div>`);
+
+            const product = a * c;
+            let m = null, n = null;
+            
+            for (let i = -Math.abs(product); i <= Math.abs(product); i++) {
+                if (i !== 0 && product % i === 0) {
+                    const j = product / i;
+                    if (i + j === b) {
+                        m = i;
+                        n = j;
+                        break;
+                    }
+                }
+            }
+
+            if (m !== null && n !== null) {
+                steps.push(`<p>العددان المطلوبان هما ${m} و ${n}</p>`);
+                steps.push(`<p>لأن: ${renderMath(m + ' \\times ' + n + ' = ' + (m*n))} و ${renderMath(m + ' + ' + n + ' = ' + (m+n))}</p>`);
+                
+                if (a === 1) {
+                    const factor1 = m;
+                    const factor2 = n;
+                    steps.push(`<hr><p>بما أن المعامل الأول ${renderMath('a = 1')}، التحليل المباشر:</p>`);
+                    steps.push(`<div class="step-math">${renderMath(original + ' = (x' + (factor1 >= 0 ? '+' : '') + factor1 + ')(x' + (factor2 >= 0 ? '+' : '') + factor2 + ')')}</div>`);
+                } else {
+                    steps.push(`<hr><p>نعيد كتابة الحد الأوسط:</p>`);
+                    const term1 = m >= 0 ? '+' + m + 'x' : m + 'x';
+                    const term2 = n >= 0 ? '+' + n + 'x' : n + 'x';
+                    const termC = c >= 0 ? '+' + c : c;
+                    steps.push(`<div class="step-math">${renderMath(original + ' = ' + a + 'x^2' + term1 + term2 + termC)}</div>`);
+                    
+                    steps.push(`<p>نحلل بالتقسيم إلى مجموعات:</p>`);
+                    
+                    const gcd1 = gcd(a, Math.abs(m));
+                    const factor1_coef = a / gcd1;
+                    const factor1_const = m / gcd1;
+                    const group1_factor = gcd1 + 'x';
+                    const group1_inside = factor1_coef + 'x' + (factor1_const >= 0 ? '+' : '') + factor1_const;
+                    
+                    const gcd2 = gcd(Math.abs(n), Math.abs(c));
+                    const factor2_coef = n / gcd2;
+                    const factor2_const = c / gcd2;
+                    const group2_factor = gcd2;
+                    const group2_inside = factor2_coef + 'x' + (factor2_const >= 0 ? '+' : '') + factor2_const;
+                    
+                    steps.push(`<p>المجموعة الأولى: ${renderMath(a + 'x^2' + term1 + ' = ' + group1_factor + '(' + group1_inside + ')')}</p>`);
+                    steps.push(`<p>المجموعة الثانية: ${renderMath(n + 'x' + termC + ' = ' + group2_factor + '(' + group2_inside + ')')}</p>`);
+                    
+                    steps.push(`<hr><p>نأخذ العامل المشترك:</p>`);
+                    const finalFactor1 = '(' + group1_inside + ')';
+                    const finalFactor2 = '(' + group1_factor + (group2_factor >= 0 ? '+' : '') + group2_factor + ')';
+                    steps.push(`<div class="step-math">${renderMath(original + ' = ' + finalFactor1 + finalFactor2)}</div>`);
+                }
+            } else {
+                steps.push(`<p>⚠️ لا يمكن تحليل هذه الثلاثية إلى عوامل نسبية.</p>`);
+                
+                const discriminant = b*b - 4*a*c;
+                steps.push(`<p>المميز: ${renderMath('\\Delta = b^2 - 4ac = ' + b + '^2 - 4(' + a + ')(' + c + ') = ' + discriminant)}</p>`);
+                
+                if (discriminant < 0) {
+                    steps.push(`<p>بما أن المميز سالب، لا توجد جذور حقيقية.</p>`);
+                } else if (discriminant > 0) {
+                    const root1 = (-b + Math.sqrt(discriminant)) / (2*a);
+                    const root2 = (-b - Math.sqrt(discriminant)) / (2*a);
+                    steps.push(`<p>الجذور غير نسبية:</p>`);
+                    steps.push(`<p>${renderMath('x_1 = ' + root1.toFixed(4))}</p>`);
+                    steps.push(`<p>${renderMath('x_2 = ' + root2.toFixed(4))}</p>`);
+                }
+            }
+
+            displayResult(
+                `تحليل ثلاثية الحدود`,
+                original,
+                steps.join('')
+            );
+        }
+
+        // --- Calculator 3: Special Cases ---
+        function handleSpecialCases() {
+            const power = parseInt(document.getElementById('specPower').value);
+            const a = parseFloat(document.getElementById('specA').value);
+            const b = parseFloat(document.getElementById('specB').value);
+            const c = parseFloat(document.getElementById('specC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = power === 2 ? formatPolynomial(a, b, c) : formatPolynomial3(a, b, c);
+            let steps = [];
+            let detected = false;
+
+            steps.push(`<p>المطلوب تحليل: ${renderMath(original)}</p>`);
+
+            if (power === 2) {
+                if (b === 0 && c < 0 && isPerfectSquare(a) && isPerfectSquare(-c)) {
+                    detected = true;
+                    const sqrtA = Math.sqrt(a);
+                    const sqrtC = Math.sqrt(-c);
+                    
+                    steps.push(`<div class="law-box">
+                        <h5>📌 الفرق بين مربعين</h5>
+                        <div class="law-math">${renderMath('a^2 - b^2 = (a+b)(a-b)')}</div>
+                    </div>`);
+                    
+                    steps.push(`<p>هذه حالة الفرق بين مربعين:</p>`);
+                    steps.push(`<p>${renderMath(original + ' = (' + sqrtA + 'x)^2 - (' + sqrtC + ')^2')}</p>`);
+                    steps.push(`<hr><p><strong>التحليل النهائي:</strong></p>`);
+                    steps.push(`<div class="step-math">${renderMath('(' + sqrtA + 'x + ' + sqrtC + ')(' + sqrtA + 'x - ' + sqrtC + ')')}</div>`);
+                }
+                
+                if (b !== 0 && isPerfectSquare(a) && isPerfectSquare(c)) {
+                    const sqrtA = Math.sqrt(a);
+                    const sqrtC = Math.sqrt(c);
+                    
+                    if (Math.abs(b - 2 * sqrtA * sqrtC) < 0.0001 || Math.abs(b + 2 * sqrtA * sqrtC) < 0.0001) {
+                        detected = true;
+                        const sign = b > 0 ? '+' : '-';
+                        
+                        steps.push(`<div class="law-box">
+                            <h5>📌 المربع الكامل</h5>
+                            <div class="law-math">${renderMath('a^2 \\pm 2ab + b^2 = (a \\pm b)^2')}</div>
+                        </div>`);
+                        
+                        steps.push(`<p>هذه حالة المربع الكامل:</p>`);
+                        steps.push(`<p>${renderMath(original + ' = (' + sqrtA + 'x)^2 ' + sign + ' 2(' + sqrtA + 'x)(' + sqrtC + ') + (' + sqrtC + ')^2')}</p>`);
+                        steps.push(`<hr><p><strong>التحليل النهائي:</strong></p>`);
+                        steps.push(`<div class="step-math">${renderMath('(' + sqrtA + 'x ' + sign + ' ' + sqrtC + ')^2')}</div>`);
+                    }
+                }
+            } else if (power === 3) {
+                if (b === 0 && c < 0) {
+                    const cbrtA = Math.cbrt(a);
+                    const cbrtC = Math.cbrt(-c);
+                    
+                    if (Math.abs(cbrtA - Math.round(cbrtA)) < 0.001 && Math.abs(cbrtC - Math.round(cbrtC)) < 0.001) {
+                        detected = true;
+                        const cbrtARounded = Math.round(cbrtA);
+                        const cbrtCRounded = Math.round(cbrtC);
+                        
+                        steps.push(`<div class="law-box">
+                            <h5>📌 الفرق بين مكعبين</h5>
+                            <div class="law-math">${renderMath('a^3 - b^3 = (a-b)(a^2+ab+b^2)')}</div>
+                        </div>`);
+                        
+                        const a2 = cbrtARounded * cbrtARounded;
+                        const ab = cbrtARounded * cbrtCRounded;
+                        const b2 = cbrtCRounded * cbrtCRounded;
+                        
+                        steps.push(`<p>هذه حالة الفرق بين مكعبين:</p>`);
+                        steps.push(`<p>${renderMath(original + ' = (' + cbrtARounded + 'x)^3 - (' + cbrtCRounded + ')^3')}</p>`);
+                        steps.push(`<hr><p><strong>التحليل النهائي:</strong></p>`);
+                        steps.push(`<div class="step-math">${renderMath('(' + cbrtARounded + 'x - ' + cbrtCRounded + ')(' + a2 + 'x^2 + ' + ab + 'x + ' + b2 + ')')}</div>`);
+                    }
+                }
+                
+                if (b === 0 && c > 0) {
+                    const cbrtA = Math.cbrt(a);
+                    const cbrtC = Math.cbrt(c);
+                    
+                    if (Math.abs(cbrtA - Math.round(cbrtA)) < 0.001 && Math.abs(cbrtC - Math.round(cbrtC)) < 0.001) {
+                        detected = true;
+                        const cbrtARounded = Math.round(cbrtA);
+                        const cbrtCRounded = Math.round(cbrtC);
+                        
+                        steps.push(`<div class="law-box">
+                            <h5>📌 مجموع مكعبين</h5>
+                            <div class="law-math">${renderMath('a^3 + b^3 = (a+b)(a^2-ab+b^2)')}</div>
+                        </div>`);
+                        
+                        const a2 = cbrtARounded * cbrtARounded;
+                        const ab = cbrtARounded * cbrtCRounded;
+                        const b2 = cbrtCRounded * cbrtCRounded;
+                        
+                        steps.push(`<p>هذه حالة مجموع مكعبين:</p>`);
+                        steps.push(`<p>${renderMath(original + ' = (' + cbrtARounded + 'x)^3 + (' + cbrtCRounded + ')^3')}</p>`);
+                        steps.push(`<hr><p><strong>التحليل النهائي:</strong></p>`);
+                        steps.push(`<div class="step-math">${renderMath('(' + cbrtARounded + 'x + ' + cbrtCRounded + ')(' + a2 + 'x^2 - ' + ab + 'x + ' + b2 + ')')}</div>`);
+                    }
+                }
+            }
+
+            if (!detected) {
+                steps.push(`<p>⚠️ هذا التعبير لا يطابق أي حالة خاصة معروفة.</p>`);
+                steps.push(`<p>الحالات الخاصة المدعومة:</p>`);
+                steps.push(`<ul style="text-align: right; line-height: 2;">
+                    <li>الفرق بين مربعين: ${renderMath('a^2 - b^2')}</li>
+                    <li>المربع الكامل: ${renderMath('a^2 \\pm 2ab + b^2')}</li>
+                    <li>الفرق بين مكعبين: ${renderMath('a^3 - b^3')}</li>
+                    <li>مجموع مكعبين: ${renderMath('a^3 + b^3')}</li>
+                </ul>`);
+            }
+
+            displayResult(
+                `تحليل الحالات الخاصة`,
+                original,
+                steps.join('')
+            );
+        }
+
+        function isPerfectSquare(n) {
+            if (n < 0) return false;
+            const sqrt = Math.sqrt(n);
+            return Math.abs(sqrt - Math.round(sqrt)) < 0.0001;
+        }
+
+        // --- Calculator 4: Grouping ---
+        function handleGrouping() {
+            const a = parseFloat(document.getElementById('grpA').value);
+            const b = parseFloat(document.getElementById('grpB').value);
+            const c = parseFloat(document.getElementById('grpC').value);
+            const d = parseFloat(document.getElementById('grpD').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = formatPolynomial4(a, b, c, d);
+            let steps = [];
+
+            steps.push(`<p>المطلوب تحليل: ${renderMath(original)}</p>`);
+            steps.push(`<div class="law-box">
+                <h5>📌 طريقة التحليل بالتقسيم</h5>
+                <p>نقسم الحدود إلى مجموعتين ونخرج العامل المشترك من كل مجموعة</p>
+                <p>مثال: ${renderMath('ax - 7a + 4x - 28 = a(x-7) + 4(x-7) = (x-7)(a+4)')}</p>
+            </div>`);
+
+            steps.push(`<hr><h4>المجموعة الأولى: الحدان الأولان</h4>`);
+            
+            const gcf1 = gcd(Math.abs(a), Math.abs(b));
+            const sign1 = (a < 0) ? -1 : 1;
+            const factor1Coef = gcf1 * sign1;
+            
+            const a1 = a / factor1Coef;
+            const b1 = b / factor1Coef;
+            
+            let group1Factor = '';
+            if (Math.abs(factor1Coef) === 1) {
+                group1Factor = factor1Coef < 0 ? '-x^2' : 'x^2';
+            } else {
+                group1Factor = factor1Coef + 'x^2';
+            }
+            
+            let group1Inner = '';
+            if (Math.abs(a1) === 1) {
+                group1Inner = 'x';
+            } else {
+                group1Inner = Math.abs(a1) + 'x';
+            }
+            group1Inner += (b1 >= 0 ? '+' : '') + b1;
+            
+            steps.push(`<p>نخرج العامل المشترك ${renderMath(group1Factor)}:</p>`);
+            
+            let term1 = a + 'x^3';
+            let term2 = (b >= 0 ? '+' : '') + b + 'x^2';
+            steps.push(`<p>${renderMath(term1 + term2 + ' = ' + group1Factor + '(' + group1Inner + ')')}</p>`);
+
+            steps.push(`<hr><h4>المجموعة الثانية: الحدان الأخيران</h4>`);
+            
+            const gcf2 = gcd(Math.abs(c), Math.abs(d));
+            const sign2 = (c < 0 || (c === 0 && d < 0)) ? -1 : 1;
+            const factor2Coef = gcf2 * sign2;
+            
+            const c1 = c / factor2Coef;
+            const d1 = d / factor2Coef;
+            
+            let group2Factor = '';
+            if (Math.abs(factor2Coef) === 1) {
+                group2Factor = factor2Coef < 0 ? '-1' : '1';
+            } else {
+                group2Factor = factor2Coef.toString();
+            }
+            
+            let group2Inner = '';
+            if (c !== 0) {
+                if (Math.abs(c1) === 1) {
+                    group2Inner = 'x';
+                } else {
+                    group2Inner = Math.abs(c1) + 'x';
+                }
+                group2Inner += (d1 >= 0 ? '+' : '') + d1;
+            } else {
+                group2Inner = d1.toString();
+            }
+            
+            steps.push(`<p>نخرج العامل المشترك ${renderMath(group2Factor)}:</p>`);
+            
+            let term3 = (c >= 0 ? '+' : '') + c + 'x';
+            let term4 = (d >= 0 ? '+' : '') + d;
+            
+            let group2Display = '';
+            if (group2Factor === '1') {
+                group2Display = '(' + group2Inner + ')';
+            } else if (group2Factor === '-1') {
+                group2Display = '-(' + group2Inner + ')';
+            } else {
+                group2Display = group2Factor + '(' + group2Inner + ')';
+            }
+            
+            steps.push(`<p>${renderMath(term3 + term4 + ' = ' + (c >= 0 ? '+' : '') + group2Display)}</p>`);
+
+            steps.push(`<hr><h4>إخراج العامل المشترك النهائي</h4>`);
+            
+            const normalize = (coef, const_term) => {
+                return { coef: Math.abs(coef), const: const_term };
+            };
+            
+            const norm1 = normalize(a1, b1);
+            const norm2 = normalize(c1, d1);
+            
+            if (Math.abs(norm1.coef - norm2.coef) < 0.0001 && 
+                Math.abs(norm1.const - norm2.const) < 0.0001) {
+                
+                steps.push(`<p>✓ الحدود داخل الأقواس متطابقة!</p>`);
+                steps.push(`<p>العامل المشترك هو: ${renderMath('(' + group1Inner + ')')}</p>`);
+                
+                let outerFactor = '';
+                if (group1Factor.includes('x^2')) {
+                    outerFactor = group1Factor;
+                } else {
+                    outerFactor = factor1Coef + 'x^2';
+                }
+                
+                if (group2Factor === '1') {
+                    outerFactor += '+1';
+                } else if (group2Factor === '-1') {
+                    outerFactor += '-1';
+                } else if (parseFloat(group2Factor) > 0) {
+                    outerFactor += '+' + group2Factor;
+                } else {
+                    outerFactor += group2Factor;
+                }
+                
+                steps.push(`<hr><p><strong>التحليل النهائي:</strong></p>`);
+                steps.push(`<div class="step-math">${renderMath(original + ' = (' + group1Inner + ')(' + outerFactor + ')')}</div>`);
+                
+                steps.push(`<hr><h4>التحقق:</h4>`);
+                steps.push(`<p>بضرب العاملين نحصل على المعادلة الأصلية ✓</p>`);
+            } else {
+                steps.push(`<p>⚠️ الحدود داخل الأقواس غير متطابقة.</p>`);
+                steps.push(`<p>قد تحتاج إلى تجميع مختلف أو استخدام طريقة أخرى.</p>`);
+                
+                steps.push(`<p>المجموعة الأولى: ${renderMath('(' + group1Inner + ')')}</p>`);
+                steps.push(`<p>المجموعة الثانية: ${renderMath('(' + group2Inner + ')')}</p>`);
+                
+                steps.push(`<hr><h4>💡 نصيحة:</h4>`);
+                steps.push(`<p>حاول تغيير ترتيب الحدود أو تجربة تجميع آخر مثل:</p>`);
+                steps.push(`<p>• تجميع الحد الأول مع الثالث</p>`);
+                steps.push(`<p>• تجميع الحد الثاني مع الرابع</p>`);
+            }
+
+            displayResult(
+                `التحليل بالتقسيم`,
+                original,
+                steps.join('')
+            );
+        }
+
+        // --- Calculator 5: Trinomial Factoring by Grouping (AC Method) ---
+        function handleTrinomialGrouping() {
+            const a = parseFloat(document.getElementById('triGrpA').value);
+            const b = parseFloat(document.getElementById('triGrpB').value);
+            const c = parseFloat(document.getElementById('triGrpC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            if (a === 0) {
+                alert("المعامل الأول لا يمكن أن يكون صفر.");
+                return;
+            }
+
+            const original = formatPolynomial(a, b, c);
+            let steps = [];
+
+            steps.push(`<p>المطلوب تحليل: ${renderMath(original)}</p>`);
+            steps.push(`<div class="law-box">
+                <h5>📌 طريقة التحليل بالتقسيم (طريقة AC)</h5>
+                <p><strong>الخطوة 1:</strong> نحسب حاصل ضرب ${renderMath('a \\times c')}</p>
+                <p><strong>الخطوة 2:</strong> نبحث عن عددين حاصل ضربهما = ${renderMath('ac')} ومجموعهما = ${renderMath('b')}</p>
+                <p><strong>الخطوة 3:</strong> نعيد كتابة الحد الأوسط ${renderMath('bx')} باستخدام العددين</p>
+                <p><strong>الخطوة 4:</strong> نحلل بالتقسيم إلى مجموعتين</p>
+            </div>`);
+
+            const product = a * c;
+            steps.push(`<hr><h4>الخطوة 1: حساب حاصل الضرب</h4>`);
+            steps.push(`<p>${renderMath('a \\times c = ' + a + ' \\times ' + c + ' = ' + product)}</p>`);
+
+            steps.push(`<hr><h4>الخطوة 2: إيجاد العددين</h4>`);
+            steps.push(`<p>نبحث عن عددين:</p>`);
+            steps.push(`<p>• حاصل ضربهما = ${renderMath(product.toString())}</p>`);
+            steps.push(`<p>• مجموعهما = ${renderMath(b.toString())}</p>`);
+
+            let m = null, n = null;
+            
+            for (let i = -Math.abs(product); i <= Math.abs(product); i++) {
+                if (i !== 0 && product % i === 0) {
+                    const j = product / i;
+                    if (i + j === b) {
+                        m = i;
+                        n = j;
+                        break;
+                    }
+                }
+            }
+
+            if (m === null || n === null) {
+                steps.push(`<p>⚠️ لا يمكن إيجاد عددين صحيحين يحققان الشروط.</p>`);
+                
+                const discriminant = b*b - 4*a*c;
+                steps.push(`<hr><h4>التحقق بالمميز:</h4>`);
+                steps.push(`<p>${renderMath('\\Delta = b^2 - 4ac = ' + b + '^2 - 4(' + a + ')(' + c + ') = ' + discriminant)}</p>`);
+                
+                if (discriminant < 0) {
+                    steps.push(`<p>المميز سالب، لا توجد جذور حقيقية.</p>`);
+                } else if (discriminant === 0) {
+                    const root = -b / (2*a);
+                    steps.push(`<p>المميز = صفر، يوجد جذر مكرر:</p>`);
+                    steps.push(`<p>${renderMath('x = ' + root)}</p>`);
+                    if (Number.isInteger(root)) {
+                        const factor = 'x' + (root >= 0 ? '-' : '+') + Math.abs(root);
+                        steps.push(`<p>التحليل: ${renderMath(original + ' = ' + a + '(' + factor + ')^2')}</p>`);
+                    }
+                } else {
+                    const root1 = (-b + Math.sqrt(discriminant)) / (2*a);
+                    const root2 = (-b - Math.sqrt(discriminant)) / (2*a);
+                    steps.push(`<p>الجذور غير نسبية:</p>`);
+                    steps.push(`<p>${renderMath('x_1 \\approx ' + root1.toFixed(4))}</p>`);
+                    steps.push(`<p>${renderMath('x_2 \\approx ' + root2.toFixed(4))}</p>`);
+                }
+                
+                displayResult(
+                    `تحليل ثلاثية الحدود بالتقسيم`,
+                    original,
+                    steps.join('')
+                );
+                return;
+            }
+
+            steps.push(`<p>✓ العددان هما: ${renderMath(m.toString())} و ${renderMath(n.toString())}</p>`);
+            steps.push(`<p>التحقق:</p>`);
+            steps.push(`<p>• ${renderMath(m + ' \\times ' + n + ' = ' + (m*n))} ✓</p>`);
+            steps.push(`<p>• ${renderMath(m + ' + ' + n + ' = ' + (m+n))} ✓</p>`);
+
+            steps.push(`<hr><h4>الخطوة 3: إعادة كتابة الحد الأوسط</h4>`);
+            
+            const term1 = a + 'x^2';
+            const term2 = (m >= 0 ? '+' : '') + m + 'x';
+            const term3 = (n >= 0 ? '+' : '') + n + 'x';
+            const term4 = (c >= 0 ? '+' : '') + c;
+            
+            const rewritten = term1 + term2 + term3 + term4;
+            steps.push(`<p>نعيد كتابة ${renderMath(b + 'x')} كـ ${renderMath(m + 'x' + (n >= 0 ? '+' : '') + n + 'x')}:</p>`);
+            steps.push(`<p>${renderMath(original + ' = ' + rewritten)}</p>`);
+
+            steps.push(`<hr><h4>الخطوة 4: التحليل بالتقسيم إلى مجموعتين</h4>`);
+
+            steps.push(`<p><strong>المجموعة الأولى:</strong> ${renderMath(a + 'x^2' + term2)}</p>`);
+            
+            const gcf1 = gcd(Math.abs(a), Math.abs(m));
+            const sign1 = (a < 0) ? -1 : 1;
+            const factor1Coef = gcf1 * sign1;
+            
+            const a1 = a / factor1Coef;
+            const m1 = m / factor1Coef;
+            
+            let group1Factor = '';
+            if (Math.abs(factor1Coef) === 1) {
+                group1Factor = factor1Coef < 0 ? '-x' : 'x';
+            } else {
+                group1Factor = factor1Coef + 'x';
+            }
+            
+            let group1Inner = '';
+            if (Math.abs(a1) === 1) {
+                group1Inner = 'x';
+            } else {
+                group1Inner = Math.abs(a1) + 'x';
+            }
+            group1Inner += (m1 >= 0 ? '+' : '') + m1;
+            
+            steps.push(`<p>العامل المشترك: ${renderMath(group1Factor)}</p>`);
+            steps.push(`<p>${renderMath(a + 'x^2' + term2 + ' = ' + group1Factor + '(' + group1Inner + ')')}</p>`);
+
+            steps.push(`<p><strong>المجموعة الثانية:</strong> ${renderMath(n + 'x' + term4)}</p>`);
+            
+            const gcf2 = gcd(Math.abs(n), Math.abs(c));
+            const sign2 = (n < 0 || (n === 0 && c < 0)) ? -1 : 1;
+            const factor2Coef = gcf2 * sign2;
+            
+            const n1 = n / factor2Coef;
+            const c1 = c / factor2Coef;
+            
+            let group2Factor = '';
+            if (Math.abs(factor2Coef) === 1) {
+                group2Factor = factor2Coef < 0 ? '-1' : '1';
+            } else {
+                group2Factor = factor2Coef.toString();
+            }
+            
+            let group2Inner = '';
+            if (Math.abs(n1) === 1) {
+                group2Inner = 'x';
+            } else {
+                group2Inner = Math.abs(n1) + 'x';
+            }
+            group2Inner += (c1 >= 0 ? '+' : '') + c1;
+            
+            steps.push(`<p>العامل المشترك: ${renderMath(group2Factor)}</p>`);
+            
+            let group2Display = '';
+            if (group2Factor === '1') {
+                group2Display = '(' + group2Inner + ')';
+            } else if (group2Factor === '-1') {
+                group2Display = '-(' + group2Inner + ')';
+            } else {
+                group2Display = group2Factor + '(' + group2Inner + ')';
+            }
+            
+            steps.push(`<p>${renderMath(n + 'x' + term4 + ' = ' + (n >= 0 ? '+' : '') + group2Display)}</p>`);
+
+            steps.push(`<hr><h4>الخطوة 5: إخراج العامل المشترك النهائي</h4>`);
+            
+            steps.push(`<p>الآن لدينا:</p>`);
+            steps.push(`<p>${renderMath(original + ' = ' + group1Factor + '(' + group1Inner + ')' + (n >= 0 ? '+' : '') + group2Display)}</p>`);
+            
+            steps.push(`<p>العامل المشترك بين المجموعتين: ${renderMath('(' + group1Inner + ')')}</p>`);
+            
+            let finalFactor1 = '(' + group1Inner + ')';
+            let finalFactor2 = '(' + group1Factor;
+            
+            if (group2Factor === '1') {
+                finalFactor2 += '+1)';
+            } else if (group2Factor === '-1') {
+                finalFactor2 += '-1)';
+            } else if (parseFloat(group2Factor) > 0) {
+                finalFactor2 += '+' + group2Factor + ')';
+            } else {
+                finalFactor2 += group2Factor + ')';
+            }
+            
+            steps.push(`<hr><p><strong>التحليل النهائي:</strong></p>`);
+            steps.push(`<div class="step-math">${renderMath(original + ' = ' + finalFactor1 + finalFactor2)}</div>`);
+            
+            steps.push(`<hr><h4>التحقق:</h4>`);
+            steps.push(`<p>يمكننا التحقق بضرب العاملين:</p>`);
+            steps.push(`<p>عند فتح الأقواس نحصل على ${renderMath(original)} ✓</p>`);
+
+            displayResult(
+                `تحليل ثلاثية الحدود بالتقسيم`,
+                original,
+                steps.join('')
+            );
+        }
+
+        // --- Display Result ---
+        function displayResult(title, calculation, explanation) {
+            document.getElementById('resultTitle').textContent = title;
+            renderToElement('calculationDisplay', calculation);
+            document.getElementById('explanation').innerHTML = explanation;
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // --- Helper functions for examples ---
+        function setSpecialExample(power, a, b, c) {
+            document.getElementById('specPower').value = power;
+            document.getElementById('specA').value = a;
+            document.getElementById('specB').value = b;
+            document.getElementById('specC').value = c;
+            updateAllPreviews();
+        }
+
+        function setTrinomialGroupingExample(exampleNum) {
+            if (exampleNum === 1) {
+                document.getElementById('triGrpA').value = '2';
+                document.getElementById('triGrpB').value = '9';
+                document.getElementById('triGrpC').value = '10';
+            } else if (exampleNum === 2) {
+                document.getElementById('triGrpA').value = '3';
+                document.getElementById('triGrpB').value = '10';
+                document.getElementById('triGrpC').value = '8';
+            } else if (exampleNum === 3) {
+                document.getElementById('triGrpA').value = '6';
+                document.getElementById('triGrpB').value = '11';
+                document.getElementById('triGrpC').value = '4';
+            }
+            updateAllPreviews();
+        }
+    </script>
+</body>
+</html>

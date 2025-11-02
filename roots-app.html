@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة تبسيط الجذور التربيعية والتكعيبية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4facfe;
+            --secondary-color: #00f2fe;
+            --accent-a: #f093fb;
+            --accent-b: #f5576c;
+        }
+
+        .dark-theme {
+            --bg-color: #1a1a2e;
+            --card-bg: #2c2c54;
+            --text-color: #f1f1f1;
+            --input-bg: #1e1e3f;
+            --border-color: #5d5d81;
+            --section-bg: #3b3b64;
+            --shadow: 0 5px 15px rgba(0,0,0,0.4);
+            --result-bg: #1e1e3f;
+        }
+
+        .light-theme {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --input-bg: #ffffff;
+            --border-color: #ddd;
+            --section-bg: #e9ecef;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --result-bg: #fdfdfd;
+        }
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.5s;
+            color: var(--text-color);
+        }
+       
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: background 0.5s, box-shadow 0.5s;
+            position: relative;
+        }
+       
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin: 0;
+        }
+       
+        .btn-theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .calculator-section {
+            background: var(--section-bg);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .calculator-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .root-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .root-type-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+        }
+
+        .root-type-btn.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .root-type-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        
+        .katex-preview {
+            font-size: 2em;
+            padding: 10px 20px;
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            min-width: 120px;
+            text-align: center;
+            direction: ltr;
+        }
+        
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 18px;
+            transition: border-color 0.3s, background-color 0.3s;
+            background: var(--input-bg);
+            color: var(--text-color);
+            width: 150px;
+            text-align: center;
+        }
+       
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .operations {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+       
+        button {
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); 
+            width: 100%; 
+        }
+        .btn-op { 
+            font-size: 20px; 
+            padding: 10px 20px; 
+            min-width: 60px;
+        }
+        .btn-add { background: linear-gradient(135deg, #1e5631 0%, #111c14 100%); }
+        .btn-subtract { background: linear-gradient(135deg, #85601d 0%, #2e210b 100%); }
+        .btn-multiply { background: linear-gradient(135deg, #4c1a57 0%, #1e1323 100%); }
+        .btn-divide { background: linear-gradient(135deg, #1e3c72 0%, #111827 100%); }
+       
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+       
+        .result-section {
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-section.active {
+            display: block;
+        }
+       
+        .result-title {
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .calculation-display {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            direction: ltr;
+            padding: 20px;
+            background: var(--section-bg);
+            border-radius: 10px;
+        }
+        
+        .explanation {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .explanation h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .step-math {
+            padding: 15px;
+            background: var(--section-bg);
+            border-radius: 8px;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        
+        .footer-card {
+            margin-top: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+       
+        .footer-card:hover {
+            transform: scale(1.02);
+        }
+       
+        .footer-card a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .operations {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+            input[type="number"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <div class="header">
+            <h1>حاسبة الجذور التربيعية والتكعيبية</h1>
+            <button id="themeToggle" class="btn-theme-toggle">تبديل الثيم 💡</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>1. تبسيط جذر</h2>
+            <div class="root-type-selector">
+                <button class="root-type-btn active" data-root="2">جذر تربيعي (√)</button>
+                <button class="root-type-btn" data-root="3">جذر تكعيبي (∛)</button>
+            </div>
+            <div class="input-group">
+                <div class="katex-preview" id="simplifyPreview"></div>
+                <input type="number" id="simplifyInput" placeholder="أدخل العدد" value="50">
+            </div>
+            <button class="btn-primary" onclick="handleSimplify()">تبسيط الجذر</button>
+        </div>
+        
+        <div class="calculator-section">
+            <h2>2. العمليات على الجذور</h2>
+            <div class="root-type-selector">
+                <button class="root-type-btn active" data-root-op="2">جذر تربيعي (√)</button>
+                <button class="root-type-btn" data-root-op="3">جذر تكعيبي (∛)</button>
+            </div>
+            <div class="input-group">
+                <div class="katex-preview" id="opPreview1"></div>
+                <input type="number" id="opInput1" placeholder="العدد الأول" value="8">
+                <span style="font-size: 1.5em; margin: 0 10px;">+</span>
+                <div class="katex-preview" id="opPreview2"></div>
+                <input type="number" id="opInput2" placeholder="العدد الثاني" value="18">
+            </div>
+            <div class="operations">
+                <button class="btn-op btn-add" onclick="handleOperation('+')">+</button>
+                <button class="btn-op btn-subtract" onclick="handleOperation('-')">-</button>
+                <button class="btn-op btn-multiply" onclick="handleOperation('×')">×</button>
+                <button class="btn-op btn-divide" onclick="handleOperation('÷')">÷</button>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h3 class="result-title" id="resultTitle">النتيجة</h3>
+            <div class="calculation-display" id="calculationDisplay"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="footer-card">
+            <a href="https://ekhtebaraty.com" target="_blank">للمزيد زر موقعنا اختباراتي</a>
+        </div>
+    </div>
+   
+    <script>
+        let currentRootType = 2; // 2 for square, 3 for cube
+        let currentOpRootType = 2;
+
+        // --- Theme Management ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+            updatePreview('simplifyInput', 'simplifyPreview', currentRootType);
+            updatePreview('opInput1', 'opPreview1', currentOpRootType);
+            updatePreview('opInput2', 'opPreview2', currentOpRootType);
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+            setTheme(currentTheme);
+        });
+
+        function setTheme(theme) {
+            const body = document.body;
+            const toggleButton = document.getElementById('themeToggle');
+            if (theme === 'light') {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                toggleButton.textContent = 'تبديل الثيم 🌙';
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                toggleButton.textContent = 'تبديل الثيم 💡';
+            }
+        }
+
+        // Root type selectors
+        document.querySelectorAll('[data-root]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-root]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentRootType = parseInt(this.getAttribute('data-root'));
+                updatePreview('simplifyInput', 'simplifyPreview', currentRootType);
+            });
+        });
+
+        document.querySelectorAll('[data-root-op]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-root-op]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentOpRootType = parseInt(this.getAttribute('data-root-op'));
+                updatePreview('opInput1', 'opPreview1', currentOpRootType);
+                updatePreview('opInput2', 'opPreview2', currentOpRootType);
+            });
+        });
+
+        // Input listeners
+        document.getElementById('simplifyInput').addEventListener('input', function() {
+            updatePreview('simplifyInput', 'simplifyPreview', currentRootType);
+        });
+
+        document.getElementById('opInput1').addEventListener('input', function() {
+            updatePreview('opInput1', 'opPreview1', currentOpRootType);
+        });
+
+        document.getElementById('opInput2').addEventListener('input', function() {
+            updatePreview('opInput2', 'opPreview2', currentOpRootType);
+        });
+
+        function updatePreview(inputId, previewId, rootType) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const value = input.value || '?';
+            const latex = rootType === 2 ? `\\sqrt{${value}}` : `\\sqrt[3]{${value}}`;
+            katex.render(latex, preview, { throwOnError: false });
+        }
+
+        function renderMath(latex) {
+            const span = document.createElement('span');
+            katex.render(latex, span, { throwOnError: false });
+            return span.outerHTML;
+        }
+
+        // --- Core Logic ---
+
+        function simplifyRoot(n, rootType = 2) {
+            if (n < 0 && rootType === 2) {
+                return { error: "لا يمكن حساب الجذر التربيعي لعدد سالب." };
+            }
+            if (n === 0) return { coeff: 0, rem: 1, steps: ["جذر الصفر هو صفر."] };
+            if (n === 1) return { coeff: 1, rem: 1, steps: ["جذر الواحد هو واحد."] };
+
+            const isNegative = n < 0;
+            n = Math.abs(n);
+
+            let steps = [`البحث عن أكبر ${rootType === 2 ? 'مربع' : 'مكعب'} كامل يقسم العدد ${n}.`];
+            
+            for (let i = Math.floor(Math.pow(n, 1/rootType)); i > 1; i--) {
+                const perfectPower = Math.pow(i, rootType);
+                if (n % perfectPower === 0) {
+                    const remainder = n / perfectPower;
+                    const powerName = rootType === 2 ? 'مربع' : 'مكعب';
+                    steps.push(`أكبر ${powerName} كامل هو ${perfectPower} (لأن ${i}${rootType === 2 ? '²' : '³'} = ${perfectPower}).`);
+                    steps.push(`نقسم العدد الأصلي على ال${powerName} الكامل: ${n} ÷ ${perfectPower} = ${remainder}.`);
+                    
+                    const rootSymbol = rootType === 2 ? '\\sqrt' : '\\sqrt[3]';
+                    steps.push({
+                        text: `نكتب الجذر على صورة:`,
+                        math: `${rootSymbol}{${n}} = ${rootSymbol}{${perfectPower} \\times ${remainder}} = ${rootSymbol}{${perfectPower}} \\times ${rootSymbol}{${remainder}}`
+                    });
+                    steps.push({
+                        text: `بما أن ${renderMath(rootSymbol + '{' + perfectPower + '}')} = ${i}، يصبح الناتج:`,
+                        math: `${i}${rootSymbol}{${remainder}}`
+                    });
+                    return { coeff: isNegative ? -i : i, rem: remainder, steps, rootType };
+                }
+            }
+            steps.push(`العدد ${n} لا يقبل القسمة على أي ${rootType === 2 ? 'مربع' : 'مكعب'} كامل، لذا يبقى الجذر كما هو.`);
+            return { coeff: isNegative ? -1 : 1, rem: n, steps, rootType };
+        }
+
+        function formatRootLatex(coeff, rem, rootType = 2) {
+            const rootSymbol = rootType === 2 ? '\\sqrt' : '\\sqrt[3]';
+            if (rem === 1) return coeff.toString();
+            if (coeff === 1) return `${rootSymbol}{${rem}}`;
+            if (coeff === -1) return `-${rootSymbol}{${rem}}`;
+            return `${coeff}${rootSymbol}{${rem}}`;
+        }
+
+        // --- Event Handlers ---
+
+        function handleSimplify() {
+            const input = document.getElementById('simplifyInput');
+            const n = parseInt(input.value);
+
+            if (isNaN(n)) {
+                alert("الرجاء إدخال عدد صحيح.");
+                return;
+            }
+
+            const result = simplifyRoot(n, currentRootType);
+            
+            if (result.error) {
+                const rootSymbol = currentRootType === 2 ? '\\sqrt' : '\\sqrt[3]';
+                displayResult(
+                    "خطأ", 
+                    `${rootSymbol}{${n}}`,
+                    `<p>${result.error}</p>`
+                );
+                return;
+            }
+            
+            const rootSymbol = currentRootType === 2 ? '\\sqrt' : '\\sqrt[3]';
+            const finalAnswer = formatRootLatex(result.coeff, result.rem, currentRootType);
+            
+            let explanationHTML = '<h4>خطوات الحل:</h4>';
+            result.steps.forEach(step => {
+                if (typeof step === 'string') {
+                    explanationHTML += `<p>${step}</p>`;
+                } else {
+                    explanationHTML += `<p>${step.text}</p>`;
+                    explanationHTML += `<div class="step-math">${renderMath(step.math)}</div>`;
+                }
+            });
+
+            displayResult(
+                `تبسيط ${renderMath(rootSymbol + '{' + n + '}')}`,
+                `${rootSymbol}{${n}} = ${finalAnswer}`,
+                explanationHTML
+            );
+        }
+        
+        function handleOperation(op) {
+            const input1 = document.getElementById('opInput1');
+            const input2 = document.getElementById('opInput2');
+            const n1 = parseInt(input1.value);
+            const n2 = parseInt(input2.value);
+
+            if (isNaN(n1) || isNaN(n2)) {
+                alert("الرجاء إدخال أعداد صحيحة في كلا الحقلين.");
+                return;
+            }
+            
+            const s1 = simplifyRoot(n1, currentOpRootType);
+            const s2 = simplifyRoot(n2, currentOpRootType);
+
+            if (s1.error || s2.error) {
+                alert(s1.error || s2.error);
+                return;
+            }
+
+            const rootSymbol = currentOpRootType === 2 ? '\\sqrt' : '\\sqrt[3]';
+            let resultSteps = [];
+            let finalAnswer;
+
+            const latex1 = formatRootLatex(s1.coeff, s1.rem, currentOpRootType);
+            const latex2 = formatRootLatex(s2.coeff, s2.rem, currentOpRootType);
+
+            resultSteps.push(`<p>أولاً، نبسط كل جذر على حدة:</p>`);
+            resultSteps.push(`<div class="step-math">${renderMath(rootSymbol + '{' + n1 + '} = ' + latex1)}</div>`);
+            resultSteps.push(`<div class="step-math">${renderMath(rootSymbol + '{' + n2 + '} = ' + latex2)}</div>`);
+            resultSteps.push(`<hr><p>ثانياً، نجري العملية الحسابية:</p>`);
+
+            const opLatex = op === '×' ? '\\times' : op === '÷' ? '\\div' : op;
+
+            switch(op) {
+                case '+':
+                case '-':
+                    if (s1.rem !== s2.rem) {
+                        finalAnswer = `${latex1} ${op} ${latex2}`;
+                        resultSteps.push(`<p>لا يمكن جمع أو طرح الجذور لأن الأعداد داخلها مختلفة (${s1.rem} و ${s2.rem}).</p>`);
+                        resultSteps.push(`<div class="step-math">${renderMath(finalAnswer)}</div>`);
+                    } else {
+                        const resultCoeff = (op === '+') ? s1.coeff + s2.coeff : s1.coeff - s2.coeff;
+                        finalAnswer = formatRootLatex(resultCoeff, s1.rem, currentOpRootType);
+                        resultSteps.push(`<p>بما أن الجذور متشابهة، نقوم بجمع/طرح المعاملات:</p>`);
+                        resultSteps.push(`<div class="step-math">${renderMath(`(${s1.coeff} ${op} ${s2.coeff})${rootSymbol}{${s1.rem}} = ${finalAnswer}`)}</div>`);
+                    }
+                    break;
+                    
+                case '×':
+                    const multCoeff = s1.coeff * s2.coeff;
+                    const intermediateRem = s1.rem * s2.rem;
+                    const finalSimplified = simplifyRoot(intermediateRem, currentOpRootType);
+                    const resultCoeff = multCoeff * finalSimplified.coeff;
+                    finalAnswer = formatRootLatex(resultCoeff, finalSimplified.rem, currentOpRootType);
+                    
+                    resultSteps.push(`<p>نضرب المعاملات الخارجية معاً والأعداد الداخلية معاً:</p>`);
+                    resultSteps.push(`<div class="step-math">${renderMath(`(${s1.coeff} \\times ${s2.coeff}) ${rootSymbol}{${s1.rem} \\times ${s2.rem}} = ${multCoeff}${rootSymbol}{${intermediateRem}}`)}</div>`);
+                    if (intermediateRem !== finalSimplified.rem) {
+                        resultSteps.push(`<p>ثم نبسط الجذر الناتج:</p>`);
+                        resultSteps.push(`<div class="step-math">${renderMath(`${multCoeff}${rootSymbol}{${intermediateRem}} = ${multCoeff} \\times ${formatRootLatex(finalSimplified.coeff, finalSimplified.rem, currentOpRootType)} = ${finalAnswer}`)}</div>`);
+                    }
+                    break;
+                    
+                case '÷':
+                    resultSteps.push(`<p>نقسم المعاملات الخارجية معاً والأعداد الداخلية معاً:</p>`);
+                    const divCoeff = `\\frac{${s1.coeff}}{${s2.coeff}}`;
+                    const divRoot = `\\frac{${rootSymbol}{${s1.rem}}}{${rootSymbol}{${s2.rem}}}`;
+                    finalAnswer = `${divCoeff} ${divRoot}`;
+                    resultSteps.push(`<div class="step-math">${renderMath(finalAnswer)}</div>`);
+                    resultSteps.push(`<p>ملاحظة: لتبسيط أكثر، قد نحتاج إلى إنطاق المقام (عملية متقدمة).</p>`);
+                    break;
+            }
+
+            const problemLatex = `${latex1} ${opLatex} ${latex2}`;
+            displayResult(
+                `حساب العملية`,
+                `${problemLatex} = ${finalAnswer}`,
+                resultSteps.join('')
+            );
+        }
+
+        // --- UI Update ---
+
+        function displayResult(title, calculation, explanationHTML) {
+            const resultSection = document.getElementById('resultSection');
+            document.getElementById('resultTitle').innerHTML = title;
+            const calcDisplay = document.getElementById('calculationDisplay');
+            katex.render(calculation, calcDisplay, { throwOnError: false });
+            document.getElementById('explanation').innerHTML = explanationHTML;
+            resultSection.classList.add('active');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة حل المعادلات والمتباينات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-a: #f093fb;
+            --accent-b: #f5576c;
+        }
+
+        .dark-theme {
+            --bg-color: #1a1a2e;
+            --card-bg: #2c2c54;
+            --text-color: #f1f1f1;
+            --input-bg: #1e1e3f;
+            --border-color: #5d5d81;
+            --section-bg: #3b3b64;
+            --shadow: 0 5px 15px rgba(0,0,0,0.4);
+            --result-bg: #1e1e3f;
+        }
+
+        .light-theme {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --input-bg: #ffffff;
+            --border-color: #ddd;
+            --section-bg: #e9ecef;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --result-bg: #fdfdfd;
+        }
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.5s;
+            color: var(--text-color);
+        }
+       
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: background 0.5s, box-shadow 0.5s;
+        }
+       
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin: 0;
+        }
+       
+        .btn-theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .calculator-section {
+            background: var(--section-bg);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .calculator-section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .katex-preview {
+            font-size: 2em;
+            padding: 15px 25px;
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            min-width: 200px;
+            text-align: center;
+            direction: ltr;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.9em;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .input-examples {
+            font-size: 0.9em;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        input[type="number"], input[type="text"], select {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 18px;
+            transition: border-color 0.3s, background-color 0.3s;
+            background: var(--input-bg);
+            color: var(--text-color);
+            width: 100px;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            width: 100%;
+        }
+       
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+       
+        button {
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); 
+            width: 100%; 
+        }
+       
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-example {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+            margin: 3px;
+        }
+       
+        .result-section {
+            background: var(--result-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-section.active {
+            display: block;
+        }
+       
+        .result-title {
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .calculation-display {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            direction: ltr;
+            padding: 20px;
+            background: var(--section-bg);
+            border-radius: 10px;
+        }
+        
+        .explanation {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .explanation h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .step-math {
+            padding: 15px;
+            background: var(--section-bg);
+            border-radius: 8px;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .law-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .law-box h5 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .law-math {
+            direction: ltr;
+            text-align: center;
+            font-size: 1.3em;
+            padding: 10px;
+        }
+
+        .solution-box {
+            background: linear-gradient(135deg, rgba(102, 234, 126, 0.1) 0%, rgba(76, 162, 118, 0.1) 100%);
+            border: 2px solid #52c788;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .solution-box h4 {
+            color: #52c788;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .solution-value {
+            font-size: 2em;
+            direction: ltr;
+            color: var(--text-color);
+        }
+
+        .number-line {
+            margin: 20px 0;
+            padding: 30px 20px;
+            background: var(--section-bg);
+            border-radius: 10px;
+        }
+
+        .number-line svg {
+            width: 100%;
+            height: 80px;
+        }
+        
+        .footer-card {
+            margin-top: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+       
+        .footer-card:hover {
+            transform: scale(1.02);
+        }
+       
+        .footer-card a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            input[type="number"], select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <div class="header">
+            <h1>حاسبة حل المعادلات والمتباينات</h1>
+            <button id="themeToggle" class="btn-theme-toggle">تبديل الثيم 💡</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>1. حل المعادلات الخطية</h2>
+            <p class="input-examples">صيغة: ax + b = c</p>
+            <p class="input-examples">
+                <button class="btn-example" onclick="setLinearExample(2, 5, 11)">2x + 5 = 11</button>
+                <button class="btn-example" onclick="setLinearExample(-3, 7, -2)">-3x + 7 = -2</button>
+                <button class="btn-example" onclick="setLinearExample(5, -8, 12)">5x - 8 = 12</button>
+            </p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="linA" placeholder="a" value="2">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="linB" placeholder="b" value="5">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="linC" placeholder="c" value="11">
+                </div>
+                <div class="katex-preview" id="linearPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="solveLinearEquation()">حل المعادلة</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>2. حل المعادلات التربيعية</h2>
+            <p class="input-examples">صيغة: ax² + bx + c = 0</p>
+            <p class="input-examples">
+                <button class="btn-example" onclick="setQuadraticExample(1, -5, 6)">x² - 5x + 6 = 0</button>
+                <button class="btn-example" onclick="setQuadraticExample(1, 0, -9)">x² - 9 = 0</button>
+                <button class="btn-example" onclick="setQuadraticExample(2, -8, 8)">2x² - 8x + 8 = 0</button>
+            </p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="quadA" placeholder="a" value="1">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="quadB" placeholder="b" value="-5">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="quadC" placeholder="c" value="6">
+                </div>
+                <div class="katex-preview" id="quadraticPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="solveQuadraticEquation()">حل المعادلة</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>3. حل المتباينات الخطية</h2>
+            <p class="input-examples">صيغة: ax + b [علامة] c</p>
+            <p class="input-examples">
+                <button class="btn-example" onclick="setInequalityExample(2, 3, '>', 7)">2x + 3 > 7</button>
+                <button class="btn-example" onclick="setInequalityExample(-1, 5, '≤', 2)">-x + 5 ≤ 2</button>
+                <button class="btn-example" onclick="setInequalityExample(3, -4, '≥', 8)">3x - 4 ≥ 8</button>
+            </p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="ineqA" placeholder="a" value="2">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="ineqB" placeholder="b" value="3">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">العلامة</span>
+                    <select id="ineqSign">
+                        <option value=">">></option>
+                        <option value="<"><</option>
+                        <option value="≥">≥</option>
+                        <option value="≤">≤</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="ineqC" placeholder="c" value="7">
+                </div>
+                <div class="katex-preview" id="inequalityPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="solveInequality()">حل المتباينة</button>
+        </div>
+
+        <div class="calculator-section">
+            <h2>4. حل معادلات القيمة المطلقة</h2>
+            <p class="input-examples">صيغة: |ax + b| = c</p>
+            <p class="input-examples">
+                <button class="btn-example" onclick="setAbsoluteExample(2, -3, 5)">|2x - 3| = 5</button>
+                <button class="btn-example" onclick="setAbsoluteExample(1, 4, 7)">|x + 4| = 7</button>
+                <button class="btn-example" onclick="setAbsoluteExample(-3, 6, 9)">|-3x + 6| = 9</button>
+            </p>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <span class="input-label">a</span>
+                    <input type="number" id="absA" placeholder="a" value="2">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">b</span>
+                    <input type="number" id="absB" placeholder="b" value="-3">
+                </div>
+                <div class="input-wrapper">
+                    <span class="input-label">c</span>
+                    <input type="number" id="absC" placeholder="c" value="5">
+                </div>
+                <div class="katex-preview" id="absolutePreview"></div>
+            </div>
+            <button class="btn-primary" onclick="solveAbsoluteEquation()">حل المعادلة</button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <h3 class="result-title" id="resultTitle">النتيجة</h3>
+            <div class="calculation-display" id="calculationDisplay"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="footer-card">
+            <a href="https://ekhtebaraty.com" target="_blank">للمزيد زر موقعنا اختباراتي</a>
+        </div>
+    </div>
+   
+    <script>
+        // --- Theme Management ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setTheme('dark');
+            updateAllPreviews();
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+            setTheme(currentTheme);
+        });
+
+        function setTheme(theme) {
+            const body = document.body;
+            const toggleButton = document.getElementById('themeToggle');
+            if (theme === 'light') {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                toggleButton.textContent = 'تبديل الثيم 🌙';
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                toggleButton.textContent = 'تبديل الثيم 💡';
+            }
+        }
+
+        // Input listeners
+        ['linA', 'linB', 'linC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+        ['quadA', 'quadB', 'quadC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+        ['ineqA', 'ineqB', 'ineqC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+        document.getElementById('ineqSign').addEventListener('change', updateAllPreviews);
+        ['absA', 'absB', 'absC'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllPreviews);
+        });
+
+        function updateAllPreviews() {
+            updateLinearPreview();
+            updateQuadraticPreview();
+            updateInequalityPreview();
+            updateAbsolutePreview();
+        }
+
+        function updateLinearPreview() {
+            const a = parseFloat(document.getElementById('linA').value) || 0;
+            const b = parseFloat(document.getElementById('linB').value) || 0;
+            const c = parseFloat(document.getElementById('linC').value) || 0;
+            const latex = formatLinearEquation(a, b, c);
+            renderToElement('linearPreview', latex);
+        }
+
+        function updateQuadraticPreview() {
+            const a = parseFloat(document.getElementById('quadA').value) || 0;
+            const b = parseFloat(document.getElementById('quadB').value) || 0;
+            const c = parseFloat(document.getElementById('quadC').value) || 0;
+            const latex = formatQuadraticEquation(a, b, c);
+            renderToElement('quadraticPreview', latex);
+        }
+
+        function updateInequalityPreview() {
+            const a = parseFloat(document.getElementById('ineqA').value) || 0;
+            const b = parseFloat(document.getElementById('ineqB').value) || 0;
+            const sign = document.getElementById('ineqSign').value;
+            const c = parseFloat(document.getElementById('ineqC').value) || 0;
+            const latex = formatInequality(a, b, sign, c);
+            renderToElement('inequalityPreview', latex);
+        }
+
+        function updateAbsolutePreview() {
+            const a = parseFloat(document.getElementById('absA').value) || 0;
+            const b = parseFloat(document.getElementById('absB').value) || 0;
+            const c = parseFloat(document.getElementById('absC').value) || 0;
+            const latex = formatAbsoluteEquation(a, b, c);
+            renderToElement('absolutePreview', latex);
+        }
+
+        function formatLinearEquation(a, b, c) {
+            let left = '';
+            if (a === 1) left = 'x';
+            else if (a === -1) left = '-x';
+            else left = a + 'x';
+            
+            if (b > 0) left += '+' + b;
+            else if (b < 0) left += b;
+            
+            return left + '=' + c;
+        }
+
+        function formatQuadraticEquation(a, b, c) {
+            let terms = [];
+            
+            if (a === 1) terms.push('x^2');
+            else if (a === -1) terms.push('-x^2');
+            else terms.push(a + 'x^2');
+            
+            if (b !== 0) {
+                if (b === 1) terms.push('+x');
+                else if (b === -1) terms.push('-x');
+                else terms.push((b > 0 ? '+' : '') + b + 'x');
+            }
+            
+            if (c !== 0) {
+                terms.push((c > 0 ? '+' : '') + c);
+            }
+            
+            return terms.join('') + '=0';
+        }
+
+        function formatInequality(a, b, sign, c) {
+            let left = '';
+            if (a === 1) left = 'x';
+            else if (a === -1) left = '-x';
+            else left = a + 'x';
+            
+            if (b > 0) left += '+' + b;
+            else if (b < 0) left += b;
+            
+            const signMap = {'>': '>', '<': '<', '≥': '\\geq', '≤': '\\leq'};
+            return left + signMap[sign] + c;
+        }
+
+        function formatAbsoluteEquation(a, b, c) {
+            let inside = '';
+            if (a === 1) inside = 'x';
+            else if (a === -1) inside = '-x';
+            else inside = a + 'x';
+            
+            if (b > 0) inside += '+' + b;
+            else if (b < 0) inside += b;
+            
+            return '|' + inside + '|=' + c;
+        }
+
+        function renderToElement(elementId, latex) {
+            const element = document.getElementById(elementId);
+            katex.render(latex, element, { throwOnError: false });
+        }
+
+        function renderMath(latex) {
+            const span = document.createElement('span');
+            katex.render(latex, span, { throwOnError: false });
+            return span.outerHTML;
+        }
+
+        // --- Solver 1: Linear Equations ---
+        function solveLinearEquation() {
+            const a = parseFloat(document.getElementById('linA').value);
+            const b = parseFloat(document.getElementById('linB').value);
+            const c = parseFloat(document.getElementById('linC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = formatLinearEquation(a, b, c);
+            let steps = [];
+
+            steps.push(`<p>المعادلة: ${renderMath(original)}</p>`);
+            steps.push(`<div class="law-box">
+                <h5>📌 خطوات الحل</h5>
+                <p>نعزل المتغير x في أحد طرفي المعادلة</p>
+            </div>`);
+
+            if (a === 0) {
+                steps.push(`<p>⚠️ المعامل a = 0، هذه ليست معادلة خطية في x</p>`);
+                if (b === c) {
+                    steps.push(`<p>المعادلة ${b} = ${c} صحيحة، الحل: جميع الأعداد الحقيقية</p>`);
+                } else {
+                    steps.push(`<p>المعادلة ${b} = ${c} خاطئة، لا يوجد حل</p>`);
+                }
+            } else {
+                steps.push(`<hr><h4>الخطوات:</h4>`);
+                steps.push(`<p><strong>1.</strong> نطرح ${b} من الطرفين:</p>`);
+                steps.push(`<div class="step-math">${renderMath(a + 'x' + (b >= 0 ? '+' : '') + b + '-' + (b >= 0 ? b : '(' + b + ')') + '=' + c + '-' + (b >= 0 ? b : '(' + b + ')'))}</div>`);
+                steps.push(`<div class="step-math">${renderMath(a + 'x=' + (c - b))}</div>`);
+                
+                steps.push(`<p><strong>2.</strong> نقسم الطرفين على ${a}:</p>`);
+                steps.push(`<div class="step-math">${renderMath('\\frac{' + a + 'x}{' + a + '}=\\frac{' + (c - b) + '}{' + a + '}')}</div>`);
+                
+                const solution = (c - b) / a;
+                steps.push(`<div class="step-math">${renderMath('x=' + solution)}</div>`);
+                
+                steps.push(`<div class="solution-box">
+                    <h4>✓ الحل النهائي</h4>
+                    <div class="solution-value">${renderMath('x = ' + solution)}</div>
+                </div>`);
+                
+                steps.push(`<hr><h4>التحقق:</h4>`);
+                steps.push(`<p>نعوض x = ${solution} في المعادلة الأصلية:</p>`);
+                const leftSide = a * solution + b;
+                steps.push(`<p>${renderMath(a + '(' + solution + ')' + (b >= 0 ? '+' : '') + b + '=' + leftSide)}</p>`);
+                steps.push(`<p>${renderMath(leftSide + '=' + c)} ✓</p>`);
+            }
+
+            displayResult('حل المعادلة الخطية', original, steps.join(''));
+        }
+
+        // --- Solver 2: Quadratic Equations ---
+        function solveQuadraticEquation() {
+            const a = parseFloat(document.getElementById('quadA').value);
+            const b = parseFloat(document.getElementById('quadB').value);
+            const c = parseFloat(document.getElementById('quadC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = formatQuadraticEquation(a, b, c);
+            let steps = [];
+
+            steps.push(`<p>المعادلة: ${renderMath(original)}</p>`);
+            
+            if (a === 0) {
+                steps.push(`<p>⚠️ المعامل a = 0، هذه معادلة خطية وليست تربيعية</p>`);
+                displayResult('حل المعادلة التربيعية', original, steps.join(''));
+                return;
+            }
+
+            steps.push(`<div class="law-box">
+                <h5>📌 القانون العام</h5>
+                <div class="law-math">${renderMath('x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}')}</div>
+            </div>`);
+
+            const discriminant = b * b - 4 * a * c;
+            
+            steps.push(`<hr><h4>الخطوات:</h4>`);
+            steps.push(`<p><strong>1.</strong> نحسب المميز (Discriminant):</p>`);
+            steps.push(`<div class="step-math">${renderMath('\\Delta = b^2 - 4ac')}</div>`);
+            steps.push(`<div class="step-math">${renderMath('\\Delta = (' + b + ')^2 - 4(' + a + ')(' + c + ')')}</div>`);
+            steps.push(`<div class="step-math">${renderMath('\\Delta = ' + (b*b) + ' - ' + (4*a*c))}</div>`);
+            steps.push(`<div class="step-math">${renderMath('\\Delta = ' + discriminant)}</div>`);
+
+            steps.push(`<hr><p><strong>2.</strong> تحليل المميز:</p>`);
+
+            if (discriminant > 0) {
+                steps.push(`<p>بما أن Δ > 0، للمعادلة جذران حقيقيان مختلفان</p>`);
+                
+                const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                
+                steps.push(`<p><strong>3.</strong> نطبق القانون العام:</p>`);
+                steps.push(`<div class="step-math">${renderMath('x_1 = \\frac{-(' + b + ') + \\sqrt{' + discriminant + '}}{2(' + a + ')}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x_1 = \\frac{' + (-b) + ' + ' + Math.sqrt(discriminant).toFixed(4) + '}{' + (2*a) + '}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x_1 = ' + x1.toFixed(4))}</div>`);
+                
+                steps.push(`<div class="step-math">${renderMath('x_2 = \\frac{-(' + b + ') - \\sqrt{' + discriminant + '}}{2(' + a + ')}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x_2 = \\frac{' + (-b) + ' - ' + Math.sqrt(discriminant).toFixed(4) + '}{' + (2*a) + '}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x_2 = ' + x2.toFixed(4))}</div>`);
+                
+                steps.push(`<div class="solution-box">
+                    <h4>✓ الحل النهائي</h4>
+                    <div class="solution-value">${renderMath('x_1 = ' + x1.toFixed(4))}</div>
+                    <div class="solution-value">${renderMath('x_2 = ' + x2.toFixed(4))}</div>
+                </div>`);
+            } else if (discriminant === 0) {
+                steps.push(`<p>بما أن Δ = 0، للمعادلة جذر حقيقي واحد (جذر مكرر)</p>`);
+                
+                const x = -b / (2 * a);
+                
+                steps.push(`<p><strong>3.</strong> نطبق القانون العام:</p>`);
+                steps.push(`<div class="step-math">${renderMath('x = \\frac{-b}{2a} = \\frac{-(' + b + ')}{2(' + a + ')}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x = \\frac{' + (-b) + '}{' + (2*a) + '}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x = ' + x)}</div>`);
+                
+                steps.push(`<div class="solution-box">
+                    <h4>✓ الحل النهائي</h4>
+                    <div class="solution-value">${renderMath('x = ' + x + ' \\text{ (جذر مكرر)}')}</div>
+                </div>`);
+            } else {
+                steps.push(`<p>بما أن Δ < 0، ليس للمعادلة جذور حقيقية</p>`);
+                steps.push(`<p>الجذور عددان مركبان:</p>`);
+                
+                const realPart = -b / (2 * a);
+                const imaginaryPart = Math.sqrt(-discriminant) / (2 * a);
+                
+                steps.push(`<div class="step-math">${renderMath('x_1 = ' + realPart.toFixed(4) + ' + ' + imaginaryPart.toFixed(4) + 'i')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('x_2 = ' + realPart.toFixed(4) + ' - ' + imaginaryPart.toFixed(4) + 'i')}</div>`);
+                
+                steps.push(`<div class="solution-box">
+                    <h4>⚠️ لا يوجد حل حقيقي</h4>
+                    <p>الحلول عددان مركبان</p>
+                </div>`);
+            }
+
+            displayResult('حل المعادلة التربيعية', original, steps.join(''));
+        }
+
+        // --- Solver 3: Inequalities ---
+        function solveInequality() {
+            const a = parseFloat(document.getElementById('ineqA').value);
+            const b = parseFloat(document.getElementById('ineqB').value);
+            const sign = document.getElementById('ineqSign').value;
+            const c = parseFloat(document.getElementById('ineqC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = formatInequality(a, b, sign, c);
+            let steps = [];
+
+            steps.push(`<p>المتباينة: ${renderMath(original)}</p>`);
+            steps.push(`<div class="law-box">
+                <h5>📌 ملاحظة هامة</h5>
+                <p>عند القسمة أو الضرب في عدد سالب، تنعكس إشارة المتباينة</p>
+            </div>`);
+
+            if (a === 0) {
+                steps.push(`<p>⚠️ المعامل a = 0، هذه ليست متباينة في x</p>`);
+                const isTrue = {
+                    '>': b > c,
+                    '<': b < c,
+                    '≥': b >= c,
+                    '≤': b <= c
+                }[sign];
+                
+                if (isTrue) {
+                    steps.push(`<p>المتباينة ${b} ${sign} ${c} صحيحة، الحل: جميع الأعداد الحقيقية</p>`);
+                } else {
+                    steps.push(`<p>المتباينة ${b} ${sign} ${c} خاطئة، لا يوجد حل</p>`);
+                }
+            } else {
+                steps.push(`<hr><h4>الخطوات:</h4>`);
+                steps.push(`<p><strong>1.</strong> نطرح ${b} من الطرفين:</p>`);
+                
+                const signMap = {'>': '>', '<': '<', '≥': '\\geq', '≤': '\\leq'};
+                steps.push(`<div class="step-math">${renderMath(a + 'x' + signMap[sign] + (c - b))}</div>`);
+                
+                steps.push(`<p><strong>2.</strong> نقسم الطرفين على ${a}:</p>`);
+                
+                let finalSign = sign;
+                if (a < 0) {
+                    steps.push(`<p><strong>تحذير:</strong> بما أن a = ${a} < 0، ننعكس إشارة المتباينة!</p>`);
+                    finalSign = {'>': '<', '<': '>', '≥': '≤', '≤': '≥'}[sign];
+                }
+                
+                const solution = (c - b) / a;
+                steps.push(`<div class="step-math">${renderMath('x' + signMap[finalSign] + solution.toFixed(4))}</div>`);
+                
+                steps.push(`<div class="solution-box">
+                    <h4>✓ الحل النهائي</h4>
+                    <div class="solution-value">${renderMath('x ' + finalSign + ' ' + solution.toFixed(4))}</div>
+                </div>`);
+                
+                steps.push(`<hr><h4>تمثيل الحل على خط الأعداد:</h4>`);
+                steps.push(drawNumberLine(solution, finalSign));
+                
+                steps.push(`<hr><h4>كتابة الحل بصيغة الفترات:</h4>`);
+                const intervalNotation = {
+                    '>': '(' + solution.toFixed(2) + ', \\infty)',
+                    '<': '(-\\infty, ' + solution.toFixed(2) + ')',
+                    '≥': '[' + solution.toFixed(2) + ', \\infty)',
+                    '≤': '(-\\infty, ' + solution.toFixed(2) + ']'
+                }[finalSign];
+                steps.push(`<div class="step-math">${renderMath('x \\in ' + intervalNotation)}</div>`);
+            }
+
+            displayResult('حل المتباينة الخطية', original, steps.join(''));
+        }
+
+        function drawNumberLine(value, sign) {
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            const lineColor = isDarkTheme ? '#f1f1f1' : '#333';
+            const highlightColor = '#667eea';
+            
+            const center = 300;
+            const scale = 40;
+            const pointX = center + value * scale;
+            
+            let svg = '<div class="number-line"><svg viewBox="0 0 600 80" xmlns="http://www.w3.org/2000/svg">';
+            
+            // Main line
+            svg += `<line x1="50" y1="40" x2="550" y2="40" stroke="${lineColor}" stroke-width="2"/>`;
+            
+            // Arrow
+            svg += `<polygon points="550,40 545,37 545,43" fill="${lineColor}"/>`;
+            
+            // Ticks and numbers
+            for (let i = -5; i <= 5; i++) {
+                const x = center + i * scale;
+                svg += `<line x1="${x}" y1="35" x2="${x}" y2="45" stroke="${lineColor}" stroke-width="1"/>`;
+                svg += `<text x="${x}" y="60" text-anchor="middle" fill="${lineColor}" font-size="12">${(value + i).toFixed(0)}</text>`;
+            }
+            
+            // Highlight region
+            if (sign === '>' || sign === '≥') {
+                svg += `<line x1="${pointX}" y1="40" x2="550" y2="40" stroke="${highlightColor}" stroke-width="4"/>`;
+            } else {
+                svg += `<line x1="50" y1="40" x2="${pointX}" y2="40" stroke="${highlightColor}" stroke-width="4"/>`;
+            }
+            
+            // Point
+            if (sign === '≥' || sign === '≤') {
+                svg += `<circle cx="${pointX}" cy="40" r="5" fill="${highlightColor}"/>`;
+            } else {
+                svg += `<circle cx="${pointX}" cy="40" r="5" fill="white" stroke="${highlightColor}" stroke-width="2"/>`;
+            }
+            
+            svg += '</svg></div>';
+            return svg;
+        }
+
+        // --- Solver 4: Absolute Value Equations ---
+        function solveAbsoluteEquation() {
+            const a = parseFloat(document.getElementById('absA').value);
+            const b = parseFloat(document.getElementById('absB').value);
+            const c = parseFloat(document.getElementById('absC').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert("الرجاء إدخال قيم صحيحة.");
+                return;
+            }
+
+            const original = formatAbsoluteEquation(a, b, c);
+            let steps = [];
+
+            steps.push(`<p>المعادلة: ${renderMath(original)}</p>`);
+            
+            if (c < 0) {
+                steps.push(`<p>⚠️ بما أن c = ${c} < 0، لا يوجد حل</p>`);
+                steps.push(`<p>القيمة المطلقة لا يمكن أن تكون سالبة!</p>`);
+                steps.push(`<div class="solution-box">
+                    <h4>⚠️ لا يوجد حل</h4>
+                    <p>القيمة المطلقة دائماً ≥ 0</p>
+                </div>`);
+                displayResult('حل معادلة القيمة المطلقة', original, steps.join(''));
+                return;
+            }
+
+            if (c === 0) {
+                steps.push(`<p>بما أن c = 0، يجب أن يكون ما داخل القيمة المطلقة = 0</p>`);
+                steps.push(`<div class="law-box">
+                    <h5>📌 القاعدة</h5>
+                    <p>${renderMath('|ax + b| = 0 \\Rightarrow ax + b = 0')}</p>
+                </div>`);
+                
+                if (a === 0) {
+                    if (b === 0) {
+                        steps.push(`<p>0 = 0، الحل: جميع الأعداد الحقيقية</p>`);
+                    } else {
+                        steps.push(`<p>${b} ≠ 0، لا يوجد حل</p>`);
+                    }
+                } else {
+                    const solution = -b / a;
+                    steps.push(`<div class="step-math">${renderMath(a + 'x + ' + b + ' = 0')}</div>`);
+                    steps.push(`<div class="step-math">${renderMath('x = ' + solution)}</div>`);
+                    steps.push(`<div class="solution-box">
+                        <h4>✓ الحل النهائي</h4>
+                        <div class="solution-value">${renderMath('x = ' + solution)}</div>
+                    </div>`);
+                }
+            } else {
+                steps.push(`<div class="law-box">
+                    <h5>📌 القاعدة</h5>
+                    <p>${renderMath('|A| = c \\Rightarrow A = c \\text{ أو } A = -c')}</p>
+                </div>`);
+                
+                steps.push(`<hr><h4>الحالة الأولى:</h4>`);
+                steps.push(`<p>${renderMath(a + 'x + ' + b + ' = ' + c)}</p>`);
+                
+                if (a !== 0) {
+                    const x1 = (c - b) / a;
+                    steps.push(`<div class="step-math">${renderMath(a + 'x = ' + (c - b))}</div>`);
+                    steps.push(`<div class="step-math">${renderMath('x_1 = ' + x1)}</div>`);
+                    
+                    steps.push(`<hr><h4>الحالة الثانية:</h4>`);
+                    steps.push(`<p>${renderMath(a + 'x + ' + b + ' = -' + c)}</p>`);
+                    
+                    const x2 = (-c - b) / a;
+                    steps.push(`<div class="step-math">${renderMath(a + 'x = ' + (-c - b))}</div>`);
+                    steps.push(`<div class="step-math">${renderMath('x_2 = ' + x2)}</div>`);
+                    
+                    steps.push(`<div class="solution-box">
+                        <h4>✓ الحل النهائي</h4>
+                        <div class="solution-value">${renderMath('x_1 = ' + x1)}</div>
+                        <div class="solution-value">${renderMath('x_2 = ' + x2)}</div>
+                    </div>`);
+                    
+                    steps.push(`<hr><h4>التحقق:</h4>`);
+                    steps.push(`<p>للحل الأول x = ${x1}:</p>`);
+                    const check1 = Math.abs(a * x1 + b);
+                    steps.push(`<p>${renderMath('|' + a + '(' + x1 + ') + ' + b + '| = |' + (a * x1 + b) + '| = ' + check1)} ✓</p>`);
+                    
+                    steps.push(`<p>للحل الثاني x = ${x2}:</p>`);
+                    const check2 = Math.abs(a * x2 + b);
+                    steps.push(`<p>${renderMath('|' + a + '(' + x2 + ') + ' + b + '| = |' + (a * x2 + b) + '| = ' + check2)} ✓</p>`);
+                }
+            }
+
+            displayResult('حل معادلة القيمة المطلقة', original, steps.join(''));
+        }
+
+        // --- Display Result ---
+        function displayResult(title, calculation, explanation) {
+            document.getElementById('resultTitle').textContent = title;
+            renderToElement('calculationDisplay', calculation);
+            document.getElementById('explanation').innerHTML = explanation;
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // --- Helper functions for examples ---
+        function setLinearExample(a, b, c) {
+            document.getElementById('linA').value = a;
+            document.getElementById('linB').value = b;
+            document.getElementById('linC').value = c;
+            updateAllPreviews();
+        }
+
+        function setQuadraticExample(a, b, c) {
+            document.getElementById('quadA').value = a;
+            document.getElementById('quadB').value = b;
+            document.getElementById('quadC').value = c;
+            updateAllPreviews();
+        }
+
+        function setInequalityExample(a, b, sign, c) {
+            document.getElementById('ineqA').value = a;
+            document.getElementById('ineqB').value = b;
+            document.getElementById('ineqSign').value = sign;
+            document.getElementById('ineqC').value = c;
+            updateAllPreviews();
+        }
+
+        function setAbsoluteExample(a, b, c) {
+            document.getElementById('absA').value = a;
+            document.getElementById('absB').value = b;
+            document.getElementById('absC').value = c;
+            updateAllPreviews();
+        }
+    </script>
+</body>
+</html>

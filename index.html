@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رياضيات الصف الثاني الإعدادي | تطبيقات وأدوات تفاعلية</title>
+
+    <meta name="description" content="تطبيقات وأدوات إلكترونية تفاعلية في الرياضيات لطلاب الصف الثاني الإعدادي، تشمل الفترات، الجذور، الأسس، الأعداد النسبية، والتحليل.">
+    <meta name="keywords" content="رياضيات, الصف الثاني الإعدادي, تانية إعدادي, جبر, الفترات, الجذور, الأسس, الأعداد النسبية, التحليل, تطبيقات تعليمية, أدوات رياضيات">
+    
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G31DTRD6R0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-G31DTRD6R0');
+    </script>
+    
+    <style>
+        body, * {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: #0d1117; /* خلفية داكنة */
+        }
+        
+        .nav-gradient {
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease-in-out;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transform: translateY(20px);
+            opacity: 0;
+            border-radius: 1rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feature-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            border-color: rgba(167, 139, 250, 0.5);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+        }
+
+        .arrow-icon {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .feature-card:hover .arrow-icon {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        #auth-container button {
+            width: 6rem !important;
+            height: 2.75rem !important;
+            font-size: 0.75rem !important;
+            padding: 1px !important;
+        }
+
+        @media (max-width: 380px) {
+            #auth-container {
+                padding: 25px 20px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            #auth-container button {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+
+<nav class="nav-gradient fixed w-full top-0 z-50 shadow-lg">
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <a href="index.html" class="flex items-center space-x-2 space-x-reverse">
+                    <img src="images/logo.svg" alt="شعار اختباراتي" class="h-16 w-auto">
+                    <span class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">اختباراتي</span>
+                </a>
+                <div class="w-2 h-2 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full pulse-animation"></div>
+            </div>
+            <div class="hidden md:flex space-x-8 space-x-reverse items-center">
+                <a href="index.html" class="text-white font-semibold border-b-2 border-purple-400">الرئيسية</a>
+                <a href="choose.html" class="text-gray-300 hover:text-purple-400 transition-colors font-medium">الاختبارات</a>
+                <a href="about.html" class="text-gray-300 hover:text-purple-400 transition-colors font-medium">من نحن</a>
+                <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors font-medium">تواصل معنا</a>
+            </div>
+            <div class="flex items-center">
+                <div id="auth-container" class="hidden md:block"></div>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-purple-400 ml-4">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-900/90 backdrop-blur-md">
+        <a href="index.html" class="block py-3 px-6 text-white bg-purple-500/30">الرئيسية</a>
+        <a href="choose.html" class="block py-3 px-6 text-gray-300 hover:bg-purple-500/20">الاختبارات</a>
+        <a href="about.html" class="block py-3 px-6 text-gray-300 hover:bg-purple-500/20">من نحن</a>
+        <a href="contact.html" class="block py-3 px-6 text-gray-300 hover:bg-purple-500/20">تواصل معنا</a>
+        <div id="auth-container-mobile" class="px-6 py-4 border-t border-gray-700"></div>
+    </div>
+</nav>
+
+<main class="pt-32 pb-20 bg-gray-900">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">
+                <span class="block bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                    تطبيقات رياضيات للصف الثاني الإعدادي
+                </span>
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                أدوات إلكترونية تفاعلية لمساعدتك على فهم وممارسة أهم مفاهيم الجبر المقررة.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            
+            <a href="intervals-app.html" class="feature-card rounded-2xl p-8 text-center block" aria-label="تطبيق لحساب الفترات" style="transition-delay: 100ms;">
+                <div class="text-purple-400 text-6xl mb-6"><i class="fas fa-arrows-left-right"></i></div>
+                <div class="flex justify-center items-center mb-4">
+                    <h3 class="text-2xl font-bold text-white ml-4">تطبيق حساب الفترات</h3>
+                    <div class="arrow-icon text-purple-400 text-2xl"><i class="fas fa-arrow-left"></i></div>
+                </div>
+                <p class="text-gray-400">أداة لحساب تقاطع واتحاد الفترات وتمثيلها على خط الأعداد.</p>
+            </a>
+
+            <a href="roots-app.html" class="feature-card rounded-2xl p-8 text-center block" aria-label="تطبيق لتبسيط الجذور" style="transition-delay: 200ms;">
+                <div class="text-purple-400 text-6xl mb-6"><i class="fas fa-square-root-variable"></i></div>
+                <div class="flex justify-center items-center mb-4">
+                    <h3 class="text-2xl font-bold text-white ml-4">تبسيط الجذور وعملياتها</h3>
+                    <div class="arrow-icon text-purple-400 text-2xl"><i class="fas fa-arrow-left"></i></div>
+                </div>
+                <p class="text-gray-400">تبسيط الجذور وإجراء عمليات الجمع والطرح والضرب والقسمة.</p>
+            </a>
+
+            <a href="exponents-app.html" class="feature-card rounded-2xl p-8 text-center block" aria-label="تطبيق لتبسيط الأسس" style="transition-delay: 300ms;">
+                <div class="text-purple-400 text-6xl mb-6"><i class="fas fa-superscript"></i></div>
+                <div class="flex justify-center items-center mb-4">
+                    <h3 class="text-2xl font-bold text-white ml-4">تبسيط الأسس وعملياتها</h3>
+                    <div class="arrow-icon text-purple-400 text-2xl"><i class="fas fa-arrow-left"></i></div>
+                </div>
+                <p class="text-gray-400">حل مسائل الأسس الصحيحة وتطبيق قوانينها المختلفة.</p>
+            </a>
+            
+            <a href="rational-numbers-app.html" class="feature-card rounded-2xl p-8 text-center block" aria-label="تطبيق للأعداد النسبية" style="transition-delay: 400ms;">
+                <div class="text-purple-400 text-6xl mb-6"><i class="fas fa-divide"></i></div>
+                <div class="flex justify-center items-center mb-4">
+                    <h3 class="text-2xl font-bold text-white ml-4">الأعداد النسبية وعملياتها</h3>
+                    <div class="arrow-icon text-purple-400 text-2xl"><i class="fas fa-arrow-left"></i></div>
+                </div>
+                <p class="text-gray-400">الكشف عن نوع العدد وإجراء العمليات الحسابية على الأعداد الحقيقية.</p>
+            </a>
+            
+            <a href="factorization-app.html" class="feature-card rounded-2xl p-8 text-center block" aria-label="تطبيق للتحليل" style="transition-delay: 500ms;">
+                <div class="text-purple-400 text-6xl mb-6"><i class="fas fa-puzzle-piece"></i></div>
+                <div class="flex justify-center items-center mb-4">
+                    <h3 class="text-2xl font-bold text-white ml-4">التحليل بطرقه المختلفة</h3>
+                    <div class="arrow-icon text-purple-400 text-2xl"><i class="fas fa-arrow-left"></i></div>
+                </div>
+                <p class="text-gray-400">تحليل المقادير الجبرية باستخدام طرق التحليل المتنوعة.</p>
+            </a>
+            
+            <a href="equations-app.html" class="feature-card rounded-2xl p-8 text-center block" aria-label="تطبيق لحل المعادلات" style="transition-delay: 600ms;">
+                <div class="text-purple-400 text-6xl mb-6"><i class="fas fa-equals"></i></div>
+                <div class="flex justify-center items-center mb-4">
+                    <h3 class="text-2xl font-bold text-white ml-4">حل المعادلات</h3>
+                    <div class="arrow-icon text-purple-400 text-2xl"><i class="fas fa-arrow-left"></i></div>
+                </div>
+                <p class="text-gray-400">أوجد مجموعة حل المعادلات والمتباينات في متغير واحد.</p>
+            </a>
+            
+        </div>
+    </div>
+</main>
+
+<footer class="bg-black text-white py-10">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-wrap justify-between text-center md:text-right">
+            <div class="w-full md:w-1/3 mb-8 md:mb-0">
+                <h4 class="text-xl font-bold mb-4">اختباراتي</h4>
+                <p class="text-gray-400">منصتك الأولى للتعلم والتقييم الذاتي.</p>
+            </div>
+            <div class="w-full md:w-1/3 mb-8 md:mb-0">
+                <h4 class="text-xl font-bold mb-4">روابط سريعة</h4>
+                <ul class="text-gray-400">
+                    <li class="mb-2"><a href="index.html" class="hover:text-purple-400">الرئيسية</a></li>
+                    <li class="mb-2"><a href="choose.html" class="hover:text-purple-400">الاختبارات</a></li>
+                    <li class="mb-2"><a href="contact.html" class="hover:text-purple-400">تواصل معنا</a></li>
+                </ul>
+            </div>
+            <div class="w-full md:w-1/3">
+                <h4 class="text-xl font-bold mb-4">تواصل معنا</h4>
+                <ul class="text-gray-400">
+                    <li class="mb-2"><i class="fas fa-envelope ml-2 text-purple-400"></i>info@ekhtebaraty.com</li>
+                    <li class="mb-2" dir="ltr" class="text-center md:text-right"><i class="fas fa-phone mr-2 text-purple-400"></i>01066059542</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
+            <p>جميع الحقوق محفوظة © <span id="current-year"></span> اختباراتي</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        const featureCards = document.querySelectorAll('.feature-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+        }, { threshold: 0.1 });
+        featureCards.forEach(card => observer.observe(card));
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-auth-compat.min.js"></script>
+<script src="auth.js"></script>
+
+</body>
+</html>

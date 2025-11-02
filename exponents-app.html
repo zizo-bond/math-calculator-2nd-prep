@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة عمليات الأسس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <style>
+        /* جميع الأنماط الموجودة في الكود الأصلي */
+        :root{--primary-color:#667eea;--secondary-color:#764ba2}
+        .dark-theme{--bg-color:#1a1a2e;--card-bg:#2c2c54;--text-color:#f1f1f1;--input-bg:#1e1e3f;--border-color:#5d5d81;--section-bg:#3b3b64;--shadow:0 5px 15px rgba(0,0,0,0.4);--result-bg:#1e1e3f}
+        .light-theme{--bg-color:#f0f4f8;--card-bg:#ffffff;--text-color:#333;--input-bg:#ffffff;--border-color:#ddd;--section-bg:#e9ecef;--shadow:0 10px 30px rgba(0,0,0,0.1);--result-bg:#fdfdfd}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:'Cairo',sans-serif;background-color:var(--bg-color);min-height:100vh;padding:20px;transition:background-color 0.5s;color:var(--text-color)}
+        .container{max-width:900px;margin:0 auto;background:var(--card-bg);border-radius:20px;padding:30px;box-shadow:var(--shadow);transition:all 0.5s}
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border-bottom:1px solid var(--border-color);padding-bottom:15px}
+        .header h1{color:var(--primary-color);font-size:2em}
+        .btn-theme-toggle{background:none;border:1px solid var(--border-color);color:var(--text-color);padding:8px 15px;font-size:14px;border-radius:8px;cursor:pointer;transition:all 0.3s}
+        .btn-theme-toggle:hover{background:var(--primary-color);color:white;border-color:var(--primary-color)}
+        .calculator-section{background:var(--section-bg);padding:25px;border-radius:15px;margin-bottom:25px}
+        .calculator-section h2{font-size:1.5em;margin-bottom:20px;color:var(--secondary-color)}
+        .input-group{display:flex;gap:15px;align-items:center;margin-bottom:15px;justify-content:center;flex-wrap:wrap}
+        .katex-preview{font-size:2em;padding:10px 20px;background:var(--result-bg);border:1px solid var(--border-color);border-radius:10px;min-width:100px;text-align:center;direction:ltr}
+        .input-wrapper{display:flex;flex-direction:column;gap:5px;align-items:center}
+        .input-label{font-size:0.9em;color:var(--text-color);opacity:0.8}
+        input[type="number"]{padding:12px;border:2px solid var(--border-color);border-radius:8px;font-size:18px;transition:all 0.3s;background:var(--input-bg);color:var(--text-color);width:100px;text-align:center}
+        input[type="number"]:focus{outline:none;border-color:var(--primary-color)}
+        input[type="checkbox"]{width:20px;height:20px;cursor:pointer}
+        .operations{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+        button{padding:12px 24px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.3s;color:white;box-shadow:0 4px 6px rgba(0,0,0,0.1);font-family:'Cairo',sans-serif}
+        .btn-primary{background:linear-gradient(135deg,var(--primary-color) 0%,var(--secondary-color) 100%);width:100%}
+        .btn-op{font-size:16px;padding:12px 20px}
+        .btn-multiply{background:linear-gradient(135deg,#4c1a57 0%,#1e1323 100%)}
+        .btn-divide{background:linear-gradient(135deg,#1e3c72 0%,#111827 100%)}
+        .btn-power{background:linear-gradient(135deg,#c33764 0%,#1d2671 100%)}
+        .btn-compare{background:linear-gradient(135deg,#0f2027 0%,#203a43 100%)}
+        button:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,0.3)}
+        .result-section{background:var(--result-bg);border:1px solid var(--border-color);padding:25px;border-radius:15px;margin-top:20px;display:none;animation:fadeIn 0.5s ease-out}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .result-section.active{display:block}
+        .result-title{font-size:1.6em;color:var(--primary-color);margin-bottom:20px;text-align:center}
+        .calculation-display{font-size:2em;text-align:center;margin-bottom:20px;direction:ltr;padding:20px;background:var(--section-bg);border-radius:10px}
+        .explanation{border-top:1px solid var(--border-color);padding-top:20px}
+        .explanation p{line-height:1.8;margin-bottom:10px}
+        .step-math{padding:15px;background:var(--section-bg);border-radius:8px;margin:10px 0;direction:ltr;text-align:center;font-size:1.2em}
+        .law-box{background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);border:2px solid var(--primary-color);border-radius:10px;padding:15px;margin:15px 0}
+        .law-box h5{color:var(--primary-color);margin-bottom:10px;font-size:1.1em}
+        .law-math{direction:ltr;text-align:center;font-size:1.3em;padding:10px}
+        .footer-card{margin-top:30px;background:linear-gradient(135deg,var(--primary-color) 0%,var(--secondary-color) 100%);border-radius:15px;padding:20px;text-align:center;box-shadow:var(--shadow);transition:transform 0.3s}
+        .footer-card:hover{transform:scale(1.02)}
+        .footer-card a{color:white;text-decoration:none;font-size:1.2em;font-weight:bold}
+        @media (max-width:600px){body{padding:10px}.container{padding:20px}.header h1{font-size:1.5em}.input-group{flex-direction:column;align-items:stretch}.operations{grid-template-columns:1fr 1fr}input[type="number"]{width:100%}}
+        
+        /* إضافة أنماط جديدة للتحقق من الصحة */
+        .input-error{border-color:#e74c3c !important;box-shadow:0 0 5px rgba(231,76,60,0.5)}
+        .error-message{color:#e74c3c;font-size:0.8em;margin-top:5px}
+        .success-message{color:#2ecc71;font-size:0.8em;margin-top:5px}
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <div class="header">
+            <h1>حاسبة عمليات الأسس</h1>
+            <button id="themeToggle" class="btn-theme-toggle">تبديل الثيم 💡</button>
+        </div>
+        <div class="calculator-section">
+            <h2>1. تبسيط الأسس</h2>
+            <div style="margin-bottom:15px"><label style="display:flex;align-items:center;gap:10px;justify-content:center"><input type="checkbox" id="isRootBase" onchange="toggleRootInput()"><span>الأساس عبارة عن جذر</span></label></div>
+            <div class="input-group" id="normalBaseGroup">
+                <div class="input-wrapper"><span class="input-label">الأساس</span><input type="number" id="baseSimplify" value="2"></div>
+                <div class="input-wrapper"><span class="input-label">الأس</span><input type="number" id="expSimplify" value="5"></div>
+                <div class="katex-preview" id="simplifyPreview"></div>
+            </div>
+            <div class="input-group" id="rootBaseGroup" style="display:none">
+                <div class="input-wrapper"><span class="input-label">الجذر من</span><input type="number" id="rootIndex" value="2"></div>
+                <div class="input-wrapper"><span class="input-label">العدد تحت الجذر</span><input type="number" id="rootValue" value="4"></div>
+                <div class="input-wrapper"><span class="input-label">الأس</span><input type="number" id="expSimplifyRoot" value="3"></div>
+                <div class="katex-preview" id="simplifyPreviewRoot"></div>
+            </div>
+            <button class="btn-primary" onclick="handleSimplify()">حساب القيمة</button>
+        </div>
+        <div class="calculator-section">
+            <h2>2. العمليات على الأسس (نفس الأساس)</h2>
+            <div class="input-group">
+                <div class="input-wrapper"><span class="input-label">الأساس المشترك</span><input type="number" id="baseOp" value="2"></div>
+                <div class="input-wrapper"><span class="input-label">الأس الأول</span><input type="number" id="exp1Op" value="3"></div>
+                <span style="font-size:1.5em">×</span>
+                <div class="input-wrapper"><span class="input-label">الأس الثاني</span><input type="number" id="exp2Op" value="4"></div>
+                <div class="katex-preview" id="opPreview"></div>
+            </div>
+            <div class="operations">
+                <button class="btn-op btn-multiply" onclick="handleExponentOperation('multiply')">الضرب (×)</button>
+                <button class="btn-op btn-divide" onclick="handleExponentOperation('divide')">القسمة (÷)</button>
+                <button class="btn-op btn-power" onclick="handleExponentOperation('power')">رفع لأس</button>
+            </div>
+        </div>
+        <div class="calculator-section">
+            <h2>3. العمليات على أسس مختلفة</h2>
+            <div class="input-group">
+                <div class="input-wrapper"><span class="input-label">الأساس الأول</span><input type="number" id="baseDiff1" value="2"></div>
+                <div class="input-wrapper"><span class="input-label">الأس الأول</span><input type="number" id="expDiff1" value="3"></div>
+                <span style="font-size:1.5em">×</span>
+                <div class="input-wrapper"><span class="input-label">الأساس الثاني</span><input type="number" id="baseDiff2" value="3"></div>
+                <div class="input-wrapper"><span class="input-label">الأس الثاني</span><input type="number" id="expDiff2" value="2"></div>
+                <div class="katex-preview" id="diffPreview"></div>
+            </div>
+            <div class="operations">
+                <button class="btn-op btn-multiply" onclick="handleDifferentBases('multiply')">الضرب (×)</button>
+                <button class="btn-op btn-divide" onclick="handleDifferentBases('divide')">القسمة (÷)</button>
+            </div>
+        </div>
+        <div class="calculator-section">
+            <h2>4. حل معادلات أسية</h2>
+            <p style="text-align:center;margin-bottom:15px;opacity:0.9">مثال: إذا كان 3<sup>x</sup> = 27، احسب قيمة 3<sup>x-1</sup></p>
+            <div class="input-group">
+                <div class="input-wrapper"><span class="input-label">الأساس</span><input type="number" id="eqBase" value="3"></div>
+                <div class="input-wrapper"><span class="input-label">القيمة المعطاة</span><input type="number" id="eqValue" value="27"></div>
+                <div class="input-wrapper"><span class="input-label">التحويل على الأس</span><input type="number" id="eqTransform" value="-1"></div>
+                <div class="katex-preview" id="eqPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="handleEquation()">حل المعادلة</button>
+        </div>
+        <div class="calculator-section">
+            <h2>5. عمليات على الكسور</h2>
+            <p style="text-align:center;margin-bottom:15px;opacity:0.9">مثال: ما قيمة (1/6) × (6/3)<sup>6</sup> ؟</p>
+            <div class="input-group">
+                <div class="input-wrapper"><span class="input-label">البسط 1</span><input type="number" id="fracNum1" value="1"></div>
+                <div class="input-wrapper"><span class="input-label">المقام 1</span><input type="number" id="fracDen1" value="6"></div>
+                <span style="font-size:1.5em">×</span>
+                <div class="input-wrapper"><span class="input-label">البسط 2</span><input type="number" id="fracNum2" value="6"></div>
+                <div class="input-wrapper"><span class="input-label">المقام 2</span><input type="number" id="fracDen2" value="3"></div>
+                <div class="input-wrapper"><span class="input-label">الأس</span><input type="number" id="fracExp" value="6"></div>
+                <div class="katex-preview" id="fracPreview"></div>
+            </div>
+            <button class="btn-primary" onclick="handleFraction()">حساب القيمة</button>
+        </div>
+        <div class="result-section" id="resultSection">
+            <h3 class="result-title" id="resultTitle">النتيجة</h3>
+            <div class="calculation-display" id="calculationDisplay"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="footer-card"><a href="https://ekhtebaraty.com" target="_blank">للمزيد زر موقعنا اختباراتي</a></div>
+    </div>
+    <script>
+        // دالة للتحقق من صحة الإدخال
+        function validateInput(value, fieldName, allowNegative = false, allowZero = true) {
+            if (value === '' || isNaN(value)) {
+                return { isValid: false, message: `الرجاء إدخال قيمة صحيحة في حقل ${fieldName}` };
+            }
+            
+            const numValue = parseFloat(value);
+            
+            if (!allowNegative && numValue < 0) {
+                return { isValid: false, message: `القيمة في حقل ${fieldName} يجب أن تكون موجبة` };
+            }
+            
+            if (!allowZero && numValue === 0) {
+                return { isValid: false, message: `القيمة في حقل ${fieldName} يجب أن تكون غير صفرية` };
+            }
+            
+            return { isValid: true, value: numValue };
+        }
+        
+        // دالة لإزالة رسائل الخطأ
+        function clearErrorMessages() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.remove());
+            
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => input.classList.remove('input-error'));
+        }
+        
+        // دالة لعرض رسالة خطأ
+        function showError(inputElement, message) {
+            // إزالة أي رسالة خطأ سابقة لنفس الحقل
+            const existingError = inputElement.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            inputElement.classList.add('input-error');
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            errorElement.textContent = message;
+            inputElement.parentNode.appendChild(errorElement);
+        }
+        
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            setTheme('dark');
+            updateAllPreviews();
+            
+            // إضافة مستمعات الأحداث لجميع الحقول
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    clearErrorMessages();
+                    updateAllPreviews();
+                });
+            });
+        });
+        
+        // إدارة الثيم
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            setTheme(document.body.classList.contains('dark-theme') ? 'light' : 'dark');
+        });
+        
+        function setTheme(t) {
+            const b = document.body, btn = document.getElementById('themeToggle');
+            if (t === 'light') {
+                b.classList.remove('dark-theme');
+                b.classList.add('light-theme');
+                btn.textContent = 'تبديل الثيم 🌙';
+            } else {
+                b.classList.remove('light-theme');
+                b.classList.add('dark-theme');
+                btn.textContent = 'تبديل الثيم 💡';
+            }
+        }
+        
+        // تحديث المعاينات
+        function toggleRootInput() {
+            const r = document.getElementById('isRootBase').checked;
+            document.getElementById('normalBaseGroup').style.display = r ? 'none' : 'flex';
+            document.getElementById('rootBaseGroup').style.display = r ? 'flex' : 'none';
+            updateAllPreviews();
+        }
+        
+        function updateAllPreviews() {
+            updateSimplifyPreview();
+            updateOpPreview();
+            updateDiffPreview();
+            updateEqPreview();
+            updateFracPreview();
+        }
+        
+        function updateSimplifyPreview() {
+            const r = document.getElementById('isRootBase').checked;
+            if (r) {
+                const n = document.getElementById('rootIndex').value || '?';
+                const a = document.getElementById('rootValue').value || '?';
+                const e = document.getElementById('expSimplifyRoot').value || '?';
+                renderToElement('simplifyPreviewRoot', `(\\sqrt[${n}]{${a}})^{${e}}`);
+            } else {
+                const b = document.getElementById('baseSimplify').value || '?';
+                const e = document.getElementById('expSimplify').value || '?';
+                renderToElement('simplifyPreview', `${b}^{${e}}`);
+            }
+        }
+        
+        function updateOpPreview() {
+            const b = document.getElementById('baseOp').value || '?';
+            const e1 = document.getElementById('exp1Op').value || '?';
+            const e2 = document.getElementById('exp2Op').value || '?';
+            renderToElement('opPreview', `${b}^{${e1}} \\times ${b}^{${e2}}`);
+        }
+        
+        function updateDiffPreview() {
+            const b1 = document.getElementById('baseDiff1').value || '?';
+            const e1 = document.getElementById('expDiff1').value || '?';
+            const b2 = document.getElementById('baseDiff2').value || '?';
+            const e2 = document.getElementById('expDiff2').value || '?';
+            renderToElement('diffPreview', `${b1}^{${e1}} \\times ${b2}^{${e2}}`);
+        }
+        
+        function updateEqPreview() {
+            const b = document.getElementById('eqBase').value || '?';
+            const v = document.getElementById('eqValue').value || '?';
+            const t = document.getElementById('eqTransform').value || '?';
+            const s = parseFloat(t) >= 0 ? '+' : '';
+            renderToElement('eqPreview', `${b}^{x} = ${v} \\Rightarrow ${b}^{x${s}${t}} = ?`);
+        }
+        
+        function updateFracPreview() {
+            const n1 = document.getElementById('fracNum1').value || '?';
+            const d1 = document.getElementById('fracDen1').value || '?';
+            const n2 = document.getElementById('fracNum2').value || '?';
+            const d2 = document.getElementById('fracDen2').value || '?';
+            const e = document.getElementById('fracExp').value || '?';
+            renderToElement('fracPreview', `\\frac{${n1}}{${d1}} \\times (\\frac{${n2}}{${d2}})^{${e}}`);
+        }
+        
+        function renderToElement(id, latex) {
+            try {
+                katex.render(latex, document.getElementById(id), { throwOnError: false });
+            } catch (e) {
+                console.error('خطأ في عرض LaTeX:', e);
+            }
+        }
+        
+        function renderMath(latex) {
+            const s = document.createElement('span');
+            try {
+                katex.render(latex, s, { throwOnError: false });
+            } catch (e) {
+                console.error('خطأ في عرض LaTeX:', e);
+                s.textContent = latex;
+            }
+            return s.outerHTML;
+        }
+        
+        // معالجة تبسيط الأسس
+        function handleSimplify() {
+            clearErrorMessages();
+            document.getElementById('isRootBase').checked ? handleRootSimplify() : handleNormalSimplify();
+        }
+        
+        function handleRootSimplify() {
+            const n = document.getElementById('rootIndex').value;
+            const a = document.getElementById('rootValue').value;
+            const exp = document.getElementById('expSimplifyRoot').value;
+            
+            // التحقق من صحة الإدخال
+            const nValidation = validateInput(n, 'الجذر من', false, false);
+            const aValidation = validateInput(a, 'العدد تحت الجذر');
+            const expValidation = validateInput(exp, 'الأس');
+            
+            if (!nValidation.isValid) {
+                showError(document.getElementById('rootIndex'), nValidation.message);
+                return;
+            }
+            
+            if (!aValidation.isValid) {
+                showError(document.getElementById('rootValue'), aValidation.message);
+                return;
+            }
+            
+            if (!expValidation.isValid) {
+                showError(document.getElementById('expSimplifyRoot'), expValidation.message);
+                return;
+            }
+            
+            const rootIndex = nValidation.value;
+            const rootValue = aValidation.value;
+            const exponent = expValidation.value;
+            
+            let steps = [];
+            steps.push(`<p>لحساب ${renderMath('(\\sqrt['+rootIndex+']{'+rootValue+'})^{'+exponent+'}')}:</p>`);
+            steps.push(`<div class="law-box"><h5>📌 تحويل الجذر إلى أس كسري</h5><div class="law-math">${renderMath('\\sqrt[n]{a} = a^{\\frac{1}{n}}')}</div></div>`);
+            steps.push(`<p>نحول الجذر إلى أس:</p>`);
+            steps.push(`<div class="step-math">${renderMath('\\sqrt['+rootIndex+']{'+rootValue+'} = '+rootValue+'^{\\frac{1}{'+rootIndex+'}}')}</div>`);
+            steps.push(`<p>ثم نرفع للأس ${exponent}:</p>`);
+            steps.push(`<div class="step-math">${renderMath('('+rootValue+'^{\\frac{1}{'+rootIndex+'}})^{'+exponent+'}')}</div>`);
+            steps.push(`<div class="law-box"><h5>📌 قاعدة رفع الأس لأس</h5><div class="law-math">${renderMath('(a^m)^n = a^{m \\times n}')}</div></div>`);
+            
+            const fractionalExponent = exponent / rootIndex;
+            steps.push(`<p>نضرب الأسس:</p>`);
+            steps.push(`<div class="step-math">${renderMath(rootValue+'^{\\frac{1}{'+rootIndex+'} \\times '+exponent+'} = '+rootValue+'^{\\frac{'+exponent+'}{'+rootIndex+'}}')}</div>`);
+            
+            if (fractionalExponent === Math.floor(fractionalExponent)) {
+                steps.push(`<div class="step-math">${renderMath('= '+rootValue+'^{'+fractionalExponent+'}')}</div>`);
+            }
+            
+            const result = Math.pow(rootValue, fractionalExponent);
+            steps.push(`<p>القيمة العددية:</p>`);
+            steps.push(`<div class="step-math">${renderMath('= '+result)}</div>`);
+            
+            displayResult(
+                `حساب ${renderMath('(\\sqrt['+rootIndex+']{'+rootValue+'})^{'+exponent+'}')}`,
+                `(\\sqrt[${rootIndex}]{${rootValue}})^{${exponent}} = ${rootValue}^{\\frac{${exponent}}{${rootIndex}}} = ${result}`,
+                steps.join('')
+            );
+        }
+        
+        function handleNormalSimplify() {
+            const base = document.getElementById('baseSimplify').value;
+            const exp = document.getElementById('expSimplify').value;
+            
+            // التحقق من صحة الإدخال
+            const baseValidation = validateInput(base, 'الأساس');
+            const expValidation = validateInput(exp, 'الأس', true);
+            
+            if (!baseValidation.isValid) {
+                showError(document.getElementById('baseSimplify'), baseValidation.message);
+                return;
+            }
+            
+            if (!expValidation.isValid) {
+                showError(document.getElementById('expSimplify'), expValidation.message);
+                return;
+            }
+            
+            const baseValue = baseValidation.value;
+            const exponent = expValidation.value;
+            const result = Math.pow(baseValue, exponent);
+            
+            let steps = [];
+            steps.push(`<p>لحساب ${renderMath(baseValue+'^{'+exponent+'}')}:</p>`);
+            
+            if (exponent === 0) {
+                steps.push(`<div class="law-box"><h5>📌 قاعدة: أي عدد مرفوع للأس صفر يساوي 1</h5><div class="law-math">${renderMath('a^0 = 1')}</div></div>`);
+                steps.push(`<p>إذن ${renderMath(baseValue+'^{0} = 1')}</p>`);
+            } else if (exponent === 1) {
+                steps.push(`<div class="law-box"><h5>📌 قاعدة: أي عدد مرفوع للأس واحد يساوي نفسه</h5><div class="law-math">${renderMath('a^1 = a')}</div></div>`);
+                steps.push(`<p>إذن ${renderMath(baseValue+'^{1} = '+baseValue)}</p>`);
+            } else if (exponent < 0) {
+                const positiveExp = Math.abs(exponent);
+                const positiveResult = Math.pow(baseValue, positiveExp);
+                steps.push(`<div class="law-box"><h5>📌 قاعدة الأس السالب</h5><div class="law-math">${renderMath('a^{-n} = \\frac{1}{a^n}')}</div></div>`);
+                steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+exponent+'} = \\frac{1}{'+baseValue+'^{'+positiveExp+'}}')}</div>`);
+                steps.push(`<p>نحسب ${renderMath(baseValue+'^{'+positiveExp+'}')}:</p>`);
+                
+                if (positiveExp <= 5) {
+                    let calculation = baseValue.toString();
+                    for (let i = 1; i < positiveExp; i++) {
+                        calculation += ' \\times ' + baseValue;
+                    }
+                    steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+positiveExp+'} = '+calculation+' = '+positiveResult)}</div>`);
+                } else {
+                    steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+positiveExp+'} = '+positiveResult)}</div>`);
+                }
+                
+                steps.push(`<div class="step-math">${renderMath('\\frac{1}{'+positiveResult+'} = '+result)}</div>`);
+            } else if (Number.isInteger(exponent) && exponent > 0 && exponent <= 5) {
+                steps.push(`<p>نضرب الأساس ${baseValue} في نفسه ${exponent} مرات:</p>`);
+                let calculation = baseValue.toString();
+                let runningTotal = baseValue;
+                for (let i = 1; i < exponent; i++) {
+                    calculation += ' \\times ' + baseValue;
+                    runningTotal *= baseValue;
+                }
+                steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+exponent+'} = '+calculation)}</div>`);
+                steps.push(`<div class="step-math">${renderMath('= '+result)}</div>`);
+            } else {
+                steps.push(`<p>الحساب المباشر:</p>`);
+                steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+exponent+'} = '+result)}</div>`);
+            }
+            
+            displayResult(
+                `حساب ${renderMath(baseValue+'^{'+exponent+'}')}`,
+                `${baseValue}^{${exponent}} = ${result}`,
+                steps.join('')
+            );
+        }
+        
+        // معالجة العمليات على الأسس (نفس الأساس)
+        function handleExponentOperation(op) {
+            clearErrorMessages();
+            
+            const base = document.getElementById('baseOp').value;
+            const exp1 = document.getElementById('exp1Op').value;
+            const exp2 = document.getElementById('exp2Op').value;
+            
+            // التحقق من صحة الإدخال
+            const baseValidation = validateInput(base, 'الأساس المشترك');
+            const exp1Validation = validateInput(exp1, 'الأس الأول', true);
+            const exp2Validation = validateInput(exp2, 'الأس الثاني', true);
+            
+            if (!baseValidation.isValid) {
+                showError(document.getElementById('baseOp'), baseValidation.message);
+                return;
+            }
+            
+            if (!exp1Validation.isValid) {
+                showError(document.getElementById('exp1Op'), exp1Validation.message);
+                return;
+            }
+            
+            if (!exp2Validation.isValid) {
+                showError(document.getElementById('exp2Op'), exp2Validation.message);
+                return;
+            }
+            
+            const baseValue = baseValidation.value;
+            const exponent1 = exp1Validation.value;
+            const exponent2 = exp2Validation.value;
+            
+            let steps = [];
+            let resultExponent;
+            let operationSymbol;
+            
+            if (op === 'multiply') {
+                operationSymbol = '\\times';
+                resultExponent = exponent1 + exponent2;
+                steps.push(`<div class="law-box"><h5>📌 قاعدة ضرب الأسس (نفس الأساس)</h5><div class="law-math">${renderMath('a^m \\times a^n = a^{m+n}')}</div></div>`);
+                steps.push(`<p>عند ضرب أسس لها نفس الأساس، نجمع الأسس:</p>`);
+                steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+exponent1+'} \\times '+baseValue+'^{'+exponent2+'} = '+baseValue+'^{'+exponent1+'+'+exponent2+'}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('= '+baseValue+'^{'+resultExponent+'}')}</div>`);
+            } else if (op === 'divide') {
+                operationSymbol = '\\div';
+                resultExponent = exponent1 - exponent2;
+                steps.push(`<div class="law-box"><h5>📌 قاعدة قسمة الأسس (نفس الأساس)</h5><div class="law-math">${renderMath('\\frac{a^m}{a^n} = a^{m-n}')}</div></div>`);
+                steps.push(`<p>عند قسمة أسس لها نفس الأساس، نطرح الأسس:</p>`);
+                steps.push(`<div class="step-math">${renderMath('\\frac{'+baseValue+'^{'+exponent1+'}}{'+baseValue+'^{'+exponent2+'}} = '+baseValue+'^{'+exponent1+'-'+exponent2+'}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('= '+baseValue+'^{'+resultExponent+'}')}</div>`);
+            } else if (op === 'power') {
+                operationSymbol = '^';
+                resultExponent = exponent1 * exponent2;
+                steps.push(`<div class="law-box"><h5>📌 قاعدة رفع الأس لأس</h5><div class="law-math">${renderMath('(a^m)^n = a^{m \\times n}')}</div></div>`);
+                steps.push(`<p>عند رفع أس لأس آخر، نضرب الأسس:</p>`);
+                steps.push(`<div class="step-math">${renderMath('('+baseValue+'^{'+exponent1+'})^{'+exponent2+'} = '+baseValue+'^{'+exponent1+' \\times '+exponent2+'}')}</div>`);
+                steps.push(`<div class="step-math">${renderMath('= '+baseValue+'^{'+resultExponent+'}')}</div>`);
+            }
+            
+            const finalValue = Math.pow(baseValue, resultExponent);
+            steps.push(`<hr><p>القيمة العددية:</p>`);
+            steps.push(`<div class="step-math">${renderMath(baseValue+'^{'+resultExponent+'} = '+finalValue)}</div>`);
+            
+            let titleLatex = op === 'power' ? 
+                `(${baseValue}^{${exponent1}})^{${exponent2}}` : 
+                `${baseValue}^{${exponent1}} ${operationSymbol} ${baseValue}^{${exponent2}}`;
+                
+            displayResult(
+                `حساب ${renderMath(titleLatex)}`,
+                `${titleLatex} = ${baseValue}^{${resultExponent}} = ${finalValue}`,
+                steps.join('')
+            );
+        }
+        
+        // معالجة العمليات على أسس مختلفة
+        function handleDifferentBases(op) {
+            clearErrorMessages();
+            
+            const base1 = document.getElementById('baseDiff1').value;
+            const exp1 = document.getElementById('expDiff1').value;
+            const base2 = document.getElementById('baseDiff2').value;
+            const exp2 = document.getElementById('expDiff2').value;
+            
+            // التحقق من صحة الإدخال
+            const base1Validation = validateInput(base1, 'الأساس الأول');
+            const exp1Validation = validateInput(exp1, 'الأس الأول', true);
+            const base2Validation = validateInput(base2, 'الأساس الثاني');
+            const exp2Validation = validateInput(exp2, 'الأس الثاني', true);
+            
+            if (!base1Validation.isValid) {
+                showError(document.getElementById('baseDiff1'), base1Validation.message);
+                return;
+            }
+            
+            if (!exp1Validation.isValid) {
+                showError(document.getElementById('expDiff1'), exp1Validation.message);
+                return;
+            }
+            
+            if (!base2Validation.isValid) {
+                showError(document.getElementById('baseDiff2'), base2Validation.message);
+                return;
+            }
+            
+            if (!exp2Validation.isValid) {
+                showError(document.getElementById('expDiff2'), exp2Validation.message);
+                return;
+            }
+            
+            const base1Value = base1Validation.value;
+            const exponent1 = exp1Validation.value;
+            const base2Value = base2Validation.value;
+            const exponent2 = exp2Validation.value;
+            
+            const value1 = Math.pow(base1Value, exponent1);
+            const value2 = Math.pow(base2Value, exponent2);
+            
+            let steps = [];
+            
+            if (op === 'multiply') {
+                steps.push(`<p>عند ضرب أسس بأساسات مختلفة، نحسب قيمة كل أس ثم نضرب النتائج:</p>`);
+                steps.push(`<p>نحسب ${renderMath(base1Value+'^{'+exponent1+'}')}:</p>`);
+                steps.push(`<div class="step-math">${renderMath(base1Value+'^{'+exponent1+'} = '+value1)}</div>`);
+                steps.push(`<p>نحسب ${renderMath(base2Value+'^{'+exponent2+'}')}:</p>`);
+                steps.push(`<div class="step-math">${renderMath(base2Value+'^{'+exponent2+'} = '+value2)}</div>`);
+                
+                const result = value1 * value2;
+                steps.push(`<p>ثم نضرب النتائج:</p>`);
+                steps.push(`<div class="step-math">${renderMath(value1+' \\times '+value2+' = '+result)}</div>`);
+                
+                displayResult(
+                    `ضرب ${renderMath(base1Value+'^{'+exponent1+'} \\times '+base2Value+'^{'+exponent2+'}')}`,
+                    `${base1Value}^{${exponent1}} \\times ${base2Value}^{${exponent2}} = ${value1} \\times ${value2} = ${result}`,
+                    steps.join('')
+                );
+            } else if (op === 'divide') {
+                steps.push(`<p>عند قسمة أسس بأساسات مختلفة، نحسب قيمة كل أس ثم نقسم النتائج:</p>`);
+                steps.push(`<p>نحسب ${renderMath(base1Value+'^{'+exponent1+'}')}:</p>`);
+                steps.push(`<div class="step-math">${renderMath(base1Value+'^{'+exponent1+'} = '+value1)}</div>`);
+                steps.push(`<p>نحسب ${renderMath(base2Value+'^{'+exponent2+'}')}:</p>`);
+                steps.push(`<div class="step-math">${renderMath(base2Value+'^{'+exponent2+'} = '+value2)}</div>`);
+                
+                const result = value1 / value2;
+                steps.push(`<p>ثم نقسم النتائج:</p>`);
+                steps.push(`<div class="step-math">${renderMath('\\frac{'+value1+'}{'+value2+'} = '+result)}</div>`);
+                
+                displayResult(
+                    `قسمة ${renderMath('\\frac{'+base1Value+'^{'+exponent1+'}}{'+base2Value+'^{'+exponent2+'}}')}`,
+                    `\\frac{${base1Value}^{${exponent1}}}{${base2Value}^{${exponent2}}} = \\frac{${value1}}{${value2}} = ${result}`,
+                    steps.join('')
+                );
+            } else if (op === 'compare') {
+                steps.push(`<p>للمقارنة بين الأسس ذات الأساسات المختلفة، نحسب قيمة كل منهما:</p>`);
+                steps.push(`<p>نحسب ${renderMath(base1Value+'^{'+exponent1+'}')}:</p>`);
+                steps.push(`<div class="step-math">${renderMath(base1Value+'^{'+exponent1+'} = '+value1)}</div>`);
+                steps.push(`<p>نحسب ${renderMath(base2Value+'^{'+exponent2+'}')}:</p>`);
+                steps.push(`<div class="step-math">${renderMath(base2Value+'^{'+exponent2+'} = '+value2)}</div>`);
+                
+                let comparison;
+                if (value1 > value2) {
+                    comparison = `${renderMath(base1Value+'^{'+exponent1+'} > '+base2Value+'^{'+exponent2+'}')}`;
+                    steps.push(`<p>النتيجة: ${value1} > ${value2}</p>`);
+                } else if (value1 < value2) {
+                    comparison = `${renderMath(base1Value+'^{'+exponent1+'} < '+base2Value+'^{'+exponent2+'}')}`;
+                    steps.push(`<p>النتيجة: ${value1} < ${value2}</p>`);
+                } else {
+                    comparison = `${renderMath(base1Value+'^{'+exponent1+'} = '+base2Value+'^{'+exponent2+'}')}`;
+                    steps.push(`<p>النتيجة: ${value1} = ${value2}</p>`);
+                }
+                
+                displayResult(
+                    `مقارنة ${renderMath(base1Value+'^{'+exponent1+'}')} و ${renderMath(base2Value+'^{'+exponent2+'}')}`,
+                    comparison,
+                    steps.join('')
+                );
+            }
+        }
+        
+        // معالجة حل المعادلات الأسية
+        function handleEquation() {
+            clearErrorMessages();
+            
+            const base = document.getElementById('eqBase').value;
+            const value = document.getElementById('eqValue').value;
+            const transform = document.getElementById('eqTransform').value;
+            
+            // التحقق من صحة الإدخال
+            const baseValidation = validateInput(base, 'الأساس', false, false);
+            const valueValidation = validateInput(value, 'القيمة المعطاة');
+            const transformValidation = validateInput(transform, 'التحويل على الأس', true);
+            
+            if (!baseValidation.isValid) {
+                showError(document.getElementById('eqBase'), baseValidation.message);
+                return;
+            }
+            
+            if (!valueValidation.isValid) {
+                showError(document.getElementById('eqValue'), valueValidation.message);
+                return;
+            }
+            
+            if (!transformValidation.isValid) {
+                showError(document.getElementById('eqTransform'), transformValidation.message);
+                return;
+            }
+            
+            const baseValue = baseValidation.value;
+            const givenValue = valueValidation.value;
+            const transformValue = transformValidation.value;
+            
+            let steps = [];
+            steps.push(`<p>المعطى: ${renderMath(baseValue+'^{x} = '+givenValue)}</p>`);
+            steps.push(`<p>أولاً: نجد قيمة x بكتابة ${givenValue} على صورة أس للأساس ${baseValue}:</p>`);
+            
+            const x = Math.log(givenValue) / Math.log(baseValue);
+            
+            if (Number.isInteger(x) && x >= 0) {
+                steps.push(`<div class="step-math">${renderMath(givenValue+' = '+baseValue+'^{'+x+'}')}</div>`);
+                steps.push(`<p>إذن: ${renderMath('x = '+x)}</p>`);
+            } else {
+                steps.push(`<div class="step-math">${renderMath('x = \\log_{'+baseValue+'}{'+givenValue+'} \\approx '+x.toFixed(4))}</div>`);
+            }
+            
+            const newExponent = x + transformValue;
+            const sign = transformValue >= 0 ? '+' : '';
+            steps.push(`<p>المطلوب: حساب ${renderMath(baseValue+'^{x'+sign+transformValue+'}')}:</p>`);
+            steps.push(`<div class="step-math">${renderMath(baseValue+'^{x'+sign+transformValue+'} = '+baseValue+'^{'+x+sign+transformValue+'}')}</div>`);
+            steps.push(`<div class="step-math">${renderMath('= '+baseValue+'^{'+newExponent+'}')}</div>`);
+            
+            const result = Math.pow(baseValue, newExponent);
+            steps.push(`<div class="step-math">${renderMath('= '+result)}</div>`);
+            
+            steps.push(`<div class="law-box"><h5>📌 طريقة بديلة باستخدام قوانين الأسس</h5><div class="law-math">${renderMath('a^{m+n} = a^m \\times a^n')}</div><div class="law-math">${renderMath('a^{m-n} = \\frac{a^m}{a^n}')}</div></div>`);
+            
+            if (transformValue > 0) {
+                steps.push(`<div class="step-math">${renderMath(baseValue+'^{x+'+transformValue+'} = '+baseValue+'^{x} \\times '+baseValue+'^{'+transformValue+'}')}</div>`);
+                const baseToTransform = Math.pow(baseValue, transformValue);
+                steps.push(`<div class="step-math">${renderMath('= '+givenValue+' \\times '+baseToTransform+' = '+result)}</div>`);
+            } else if (transformValue < 0) {
+                const absTransform = Math.abs(transformValue);
+                steps.push(`<div class="step-math">${renderMath(baseValue+'^{x-'+absTransform+'} = \\frac{'+baseValue+'^{x}}{'+baseValue+'^{'+absTransform+'}}')}</div>`);
+                const baseToAbsTransform = Math.pow(baseValue, absTransform);
+                steps.push(`<div class="step-math">${renderMath('= \\frac{'+givenValue+'}{'+baseToAbsTransform+'} = '+result)}</div>`);
+            }
+            
+            displayResult(
+                `حل المعادلة ${renderMath(baseValue+'^{x} = '+givenValue)}`,
+                `${baseValue}^{x${sign}${transformValue}} = ${result}`,
+                steps.join('')
+            );
+        }
+        
+        // معالجة العمليات على الكسور
+        function handleFraction() {
+            clearErrorMessages();
+            
+            const num1 = document.getElementById('fracNum1').value;
+            const den1 = document.getElementById('fracDen1').value;
+            const num2 = document.getElementById('fracNum2').value;
+            const den2 = document.getElementById('fracDen2').value;
+            const exp = document.getElementById('fracExp').value;
+            
+            // التحقق من صحة الإدخال
+            const num1Validation = validateInput(num1, 'البسط 1', true);
+            const den1Validation = validateInput(den1, 'المقام 1', true, false);
+            const num2Validation = validateInput(num2, 'البسط 2', true);
+            const den2Validation = validateInput(den2, 'المقام 2', true, false);
+            const expValidation = validateInput(exp, 'الأس', true);
+            
+            if (!num1Validation.isValid) {
+                showError(document.getElementById('fracNum1'), num1Validation.message);
+                return;
+            }
+            
+            if (!den1Validation.isValid) {
+                showError(document.getElementById('fracDen1'), den1Validation.message);
+                return;
+            }
+            
+            if (!num2Validation.isValid) {
+                showError(document.getElementById('fracNum2'), num2Validation.message);
+                return;
+            }
+            
+            if (!den2Validation.isValid) {
+                showError(document.getElementById('fracDen2'), den2Validation.message);
+                return;
+            }
+            
+            if (!expValidation.isValid) {
+                showError(document.getElementById('fracExp'), expValidation.message);
+                return;
+            }
+            
+            const numerator1 = num1Validation.value;
+            const denominator1 = den1Validation.value;
+            const numerator2 = num2Validation.value;
+            const denominator2 = den2Validation.value;
+            const exponent = expValidation.value;
+            
+            let steps = [];
+            steps.push(`<p>لحساب ${renderMath('\\frac{'+numerator1+'}{'+denominator1+'} \\times (\\frac{'+numerator2+'}{'+denominator2+'})^{'+exponent+'}')}:</p>`);
+            
+            steps.push(`<div class="law-box"><h5>📌 قاعدة رفع الكسر لأس</h5><div class="law-math">${renderMath('(\\frac{a}{b})^n = \\frac{a^n}{b^n}')}</div></div>`);
+            steps.push(`<p>نرفع البسط والمقام للأس ${exponent}:</p>`);
+            
+            const numerator2Exp = Math.pow(numerator2, exponent);
+            const denominator2Exp = Math.pow(denominator2, exponent);
+            
+            steps.push(`<div class="step-math">${renderMath('(\\frac{'+numerator2+'}{'+denominator2+'})^{'+exponent+'} = \\frac{'+numerator2+'^{'+exponent+'}}{'+denominator2+'^{'+exponent+'}}')}</div>`);
+            steps.push(`<div class="step-math">${renderMath('= \\frac{'+numerator2Exp+'}{'+denominator2Exp+'}')}</div>`);
+            
+            steps.push(`<p>الآن نضرب الكسرين:</p>`);
+            steps.push(`<div class="step-math">${renderMath('\\frac{'+numerator1+'}{'+denominator1+'} \\times \\frac{'+numerator2Exp+'}{'+denominator2Exp+'}')}</div>`);
+            
+            const finalNumerator = numerator1 * numerator2Exp;
+            const finalDenominator = denominator1 * denominator2Exp;
+            
+            steps.push(`<div class="step-math">${renderMath('= \\frac{'+numerator1+' \\times '+numerator2Exp+'}{'+denominator1+' \\times '+denominator2Exp+'}')}</div>`);
+            steps.push(`<div class="step-math">${renderMath('= \\frac{'+finalNumerator+'}{'+finalDenominator+'}')}</div>`);
+            
+            const result = finalNumerator / finalDenominator;
+            
+            // تبسيط الكسر
+            const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+            const divisor = gcd(finalNumerator, finalDenominator);
+            
+            if (divisor > 1) {
+                const simplifiedNumerator = finalNumerator / divisor;
+                const simplifiedDenominator = finalDenominator / divisor;
+                
+                steps.push(`<p>نبسط الكسر بالقسمة على ${divisor}:</p>`);
+                steps.push(`<div class="step-math">${renderMath('= \\frac{'+simplifiedNumerator+'}{'+simplifiedDenominator+'}')}</div>`);
+                
+                if (simplifiedDenominator === 1) {
+                    steps.push(`<div class="step-math">${renderMath('= '+simplifiedNumerator)}</div>`);
+                }
+            }
+            
+            steps.push(`<p>القيمة العشرية:</p>`);
+            steps.push(`<div class="step-math">${renderMath('= '+result)}</div>`);
+            
+            displayResult(
+                `حساب ${renderMath('\\frac{'+numerator1+'}{'+denominator1+'} \\times (\\frac{'+numerator2+'}{'+denominator2+'})^{'+exponent+'}')}`,
+                `\\frac{${numerator1}}{${denominator1}} \\times (\\frac{${numerator2}}{${denominator2}})^{${exponent}} = ${result}`,
+                steps.join('')
+            );
+        }
+        
+        // عرض النتيجة
+        function displayResult(title, calculation, explanation) {
+            const resultSection = document.getElementById('resultSection');
+            document.getElementById('resultTitle').innerHTML = title;
+            
+            const calculationDisplay = document.getElementById('calculationDisplay');
+            try {
+                katex.render(calculation, calculationDisplay, { throwOnError: false });
+            } catch (e) {
+                console.error('خطأ في عرض LaTeX:', e);
+                calculationDisplay.textContent = calculation;
+            }
+            
+            document.getElementById('explanation').innerHTML = explanation;
+            resultSection.classList.add('active');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
